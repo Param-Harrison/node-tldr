@@ -1,6 +1,6 @@
 var summary = require('./index.js');
 
-summary.summarize('http://www.golem.de/news/edward-snowden-ein-held-des-digitalen-zeitalters-1312-103498.html', function(title, summary, failure) {
+summary.summarize('http://www.nytimes.com/2014/05/04/opinion/sunday/president-obama-and-the-world.html', function(title, summary, failure) {
 	if (failure) {
 		console.log("There was an error.");
 	}

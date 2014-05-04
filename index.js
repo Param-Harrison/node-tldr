@@ -1,8 +1,8 @@
 var _ = require('underscore'),
-	events = require('events'),
-	eventEmitter = new events.EventEmitter(),
 	request = require('request'),
 	cheerio = require('cheerio');
+	
+request = request.defaults({ jar: request.jar() });
 
 _.str = require('underscore.string');
 _.mixin(_.str.exports());
@@ -315,7 +315,7 @@ function main(ch, callback) {
 
 exports.summarize = function(input, callback) {
 	if (typeof input === 'string') {
-		request({ uri: input }, function(error, response, body) {
+		request(input, function(error, response, body) {
 			if (body && !error) {
 				var ch = cheerio.load(body);
 				main(ch, function(title, summary, failure) {
