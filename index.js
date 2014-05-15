@@ -177,7 +177,7 @@ function main(ch, options, callback) {
 		dict_p_arr_balance = [],
 		strip_s = "",
 		i = 0,
-        sentencesByParagraph = [];
+		sentencesByParagraph = [];
 	
 	cand = $('p').toArray();
 	_.each(cand, function(ele) {
@@ -197,7 +197,7 @@ function main(ch, options, callback) {
 	for(i = 0; i < paragraphs.length; i++) {
 		var arr = splitContentToSentences(paragraphs[i]);
 
-        sentencesByParagraph.push(arr);
+		sentencesByParagraph.push(arr);
 
 		if (arr.length > 1) {
 			_.each(arr, function(s) {
@@ -212,7 +212,7 @@ function main(ch, options, callback) {
 		dict_p_arr.push([]);
 	});
 
-    if (options.maxAnalyzedSentences) sentences = _.first(sentences, options.maxAnalyzedSentences);
+	if (options.maxAnalyzedSentences) sentences = _.first(sentences, options.maxAnalyzedSentences);
 	
 	dict = getSentencesRank(sentences);
 	
@@ -320,16 +320,16 @@ function main(ch, options, callback) {
 }
 
 var defaultOptions = {
-    maxAnalyzedSentences: 0
+	maxAnalyzedSentences: 0
 };
 
 exports.summarize = function(input, options, callback) {
-    if (arguments.length === 2) {
-        callback = options;
-        options = {};
-    }
+	if (arguments.length === 2) {
+		callback = options;
+		options = {};
+	}
 
-    _.defaults(options, defaultOptions);
+	_.defaults(options, defaultOptions);
 
 	if (typeof input === 'string') {
 		request(input, function(error, response, body) {
