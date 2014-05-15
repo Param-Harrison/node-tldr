@@ -176,7 +176,8 @@ function main(ch, options, callback) {
 		dict_p_arr = [],
 		dict_p_arr_balance = [],
 		strip_s = "",
-		i = 0;
+		i = 0,
+        sentencesByParagraph = [];
 	
 	cand = $('p').toArray();
 	_.each(cand, function(ele) {
@@ -195,6 +196,9 @@ function main(ch, options, callback) {
 	
 	for(i = 0; i < paragraphs.length; i++) {
 		var arr = splitContentToSentences(paragraphs[i]);
+
+        sentencesByParagraph.push(arr);
+
 		if (arr.length > 1) {
 			_.each(arr, function(s) {
 				sentences.push(s);
@@ -214,7 +218,7 @@ function main(ch, options, callback) {
 	
 	for(i = 0; i < paragraphs.length; i++) {
 		var p = paragraphs[i],
-			arr = splitContentToSentences(p),
+			arr = sentencesByParagraph[i],
 			max_score = 0,
 			best_s = "",
 			best_s_index = 0,
