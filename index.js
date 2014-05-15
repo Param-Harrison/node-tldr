@@ -159,7 +159,7 @@ function getSentencesRank(sentences) {
 	return sentences_dict;
 }
 
-function main(ch, callback) {
+function main(ch, options, callback) {
 	var $ = ch,
 		summary = "",
 		title = "",
@@ -176,7 +176,8 @@ function main(ch, callback) {
 		dict_p_arr = [],
 		dict_p_arr_balance = [],
 		strip_s = "",
-		i = 0;
+		i = 0,
+		sentencesByParagraph = [];
 	
 	cand = $('p').toArray();
 	_.each(cand, function(ele) {
@@ -195,6 +196,9 @@ function main(ch, callback) {
 	
 	for(i = 0; i < paragraphs.length; i++) {
 		var arr = splitContentToSentences(paragraphs[i]);
+
+		sentencesByParagraph.push(arr);
+
 		if (arr.length > 1) {
 			_.each(arr, function(s) {
 				sentences.push(s);
@@ -207,12 +211,14 @@ function main(ch, callback) {
 		selSentences.push([]);
 		dict_p_arr.push([]);
 	});
+
+	if (options.maxAnalyzedSentences) sentences = _.first(sentences, options.maxAnalyzedSentences);
 	
 	dict = getSentencesRank(sentences);
 	
 	for(i = 0; i < paragraphs.length; i++) {
 		var p = paragraphs[i],
-			arr = splitContentToSentences(p),
+			arr = sentencesByParagraph[i],
 			max_score = 0,
 			best_s = "",
 			best_s_index = 0,
@@ -313,12 +319,23 @@ function main(ch, callback) {
 	callback(_.clean(title.replace(/\n/g, '')), summary.trim(), failure);
 }
 
-exports.summarize = function(input, callback) {
+var defaultOptions = {
+	maxAnalyzedSentences: 0
+};
+
+exports.summarize = function(input, options, callback) {
+	if (arguments.length === 2) {
+		callback = options;
+		options = {};
+	}
+
+	_.defaults(options, defaultOptions);
+
 	if (typeof input === 'string') {
 		request(input, function(error, response, body) {
 			if (body && !error) {
 				var ch = cheerio.load(body);
-				main(ch, function(title, summary, failure) {
+				main(ch, options, function(title, summary, failure) {
 					callback(title, summary, failure);
 				});
 			} else {
@@ -326,7 +343,7 @@ exports.summarize = function(input, callback) {
 			}
 		});
 	} else if (typeof input === 'object') {
-		main(input, function(title, summary, failure) {
+		main(input, options, function(title, summary, failure) {
 			callback(title, summary, failure);
 		});
 	} else {
