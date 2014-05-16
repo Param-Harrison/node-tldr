@@ -175,86 +175,6 @@
     return (intersect.splice(0, splice)).length;
   };
 
-<<<<<<< HEAD
-function main(ch, options, callback) {
-	var $ = ch,
-		summary = "",
-		title = "",
-		failure = false,
-		cand = [],
-		totalWords = 0,
-		paragraphs = [],
-		sentences = [],
-		sentencesIndex = [],
-		dict = [],
-		selSentences = [],
-		selSentencesWords = 0,
-		ignore = [],
-		dict_p_arr = [],
-		dict_p_arr_balance = [],
-		strip_s = "",
-		i = 0,
-		sentencesByParagraph = [];
-	
-	cand = $('p').toArray();
-	_.each(cand, function(ele) {
-		if ($(ele).find('div').length === 0 && $(ele).find('img').length === 0 && $(ele).find('script').length === 0 && $(ele).find('ul').length === 0) {
-			
-			var text = _($(ele).text()).stripTags().trim(),
-				sent_count = countSentences(text),
-				wp_ratio = calculateWPRatio(text);
-				totalWords += countWords(text);
-			
-			if (percentageLetter(text) > 0.5 && sent_count > 0 && wp_ratio > 60) {
-				paragraphs.push(text);
-			}
-		}
-	});
-	
-	for(i = 0; i < paragraphs.length; i++) {
-		var arr = splitContentToSentences(paragraphs[i]);
-
-		sentencesByParagraph.push(arr);
-
-		if (arr.length > 1) {
-			_.each(arr, function(s) {
-				sentences.push(s);
-				sentencesIndex.push(i);
-			});
-		}
-	}
-	
-	_.each(paragraphs, function(p) {
-		selSentences.push([]);
-		dict_p_arr.push([]);
-	});
-
-	if (options.maxAnalyzedSentences) sentences = _.first(sentences, options.maxAnalyzedSentences);
-	
-	dict = getSentencesRank(sentences);
-	
-	for(i = 0; i < paragraphs.length; i++) {
-		var p = paragraphs[i],
-			arr = sentencesByParagraph[i],
-			max_score = 0,
-			best_s = "",
-			best_s_index = 0,
-			dict_p = getSentencesRank(arr);
-		dict_p_arr[i] = dict_p;
-		dict_p_arr_balance[i] = sentences.length / arr.length;
-		_.each(arr, function(s) {
-			strip_s = formatSentence(s);
-			if (s && dict_p[strip_s] > max_score && !arrayContainsObject(ignore, s)) {
-				max_score = dict_p[strip_s];
-				best_s = s;
-			}
-		});
-		
-		selSentences[i].push(best_s);
-		selSentencesWords += countWords(best_s);
-		ignore.push(best_s);
-	}
-=======
   getSentencesRank = function(sentences) {
     var a, b, score, sentences_dict, strip_s, _i, _j, _len, _len1;
     sentences_dict = {};
@@ -272,7 +192,6 @@ function main(ch, options, callback) {
     }
     return sentences_dict;
   };
->>>>>>> dev
 
   main = function(ch, options, callback) {
     var $, arr, best_s, best_s_index, cand, dict, dict_p, dict_p_arr, dict_p_arr_balance, element, failure, highestItem, highestScore, i, ignore, items, letter_percentage, longest_streak, max_score, p, paragraph, paragraphs, s, score, selSentences, selSentencesWords, sent_count, sentences, sentencesByParagraph, sentencesIndex, strip_s, summary, text, title, title_comp, totalWords, words, wp_ratio, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len12, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _s, _t, _u;
@@ -464,41 +383,4 @@ function main(ch, options, callback) {
     }
   };
 
-<<<<<<< HEAD
-	callback(_.clean(title.replace(/\n/g, '')), summary.trim(), failure);
-}
-
-var defaultOptions = {
-	maxAnalyzedSentences: 0
-};
-
-exports.summarize = function(input, options, callback) {
-	if (arguments.length === 2) {
-		callback = options;
-		options = {};
-	}
-
-	_.defaults(options, defaultOptions);
-
-	if (typeof input === 'string') {
-		request(input, function(error, response, body) {
-			if (body && !error) {
-				var ch = cheerio.load(body);
-				main(ch, options, function(title, summary, failure) {
-					callback(title, summary, failure);
-				});
-			} else {
-				callback('Failure while parsing', '', true);
-			}
-		});
-	} else if (typeof input === 'object') {
-		main(input, options, function(title, summary, failure) {
-			callback(title, summary, failure);
-		});
-	} else {
-		callback('False input data', '', true);
-	}
-}
-=======
 }).call(this);
->>>>>>> dev
