@@ -5,6 +5,6 @@ summary.summarize('http://www.nytimes.com/2014/05/04/opinion/sunday/president-ob
 		console.log("There was an error.");
 	}
 
-    console.log(' - ' + title + ' - ');
+  console.log(title);
 	console.log(summary);
 });
