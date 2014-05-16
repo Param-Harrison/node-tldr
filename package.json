@@ -1,14 +1,12 @@
 {
   "name": "node-sumuparticles",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "Node module summarizing web-articles using a naive algorithm.",
   "main": "./index.js",
   "repository": "git://github.com/philplckthun/node-sumuparticles.git",
   "dependencies": {
     "cheerio": "*",
-    "request": "*",
-    "underscore": "*",
-    "underscore.string": "*"
+    "request": "*"
   },
   "author": "Phil Plückthun <gadschon@gmail.com>",
   "readmeFilename": "README.md"

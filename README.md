@@ -15,7 +15,7 @@ npm install node-sumuparticles
 ```
 
 ## Usage
-    
+
 ```javascript
 var summary = require('node-sumuparticles');
 summary.summarize(url, function(title, summary, failure) {
@@ -23,7 +23,7 @@ summary.summarize(url, function(title, summary, failure) {
 		console.log("There was an error.");
 	}
 
-    console.log(title);
+  console.log(title);
 	console.log(summary);
 });
 ```
@@ -34,9 +34,18 @@ summary.summarize(url, function(title, summary, failure) {
 
 For *object* you can either pass a string containing an URL, or an already fetched cheerio object.
 
+<<<<<<< HEAD
 ### Possible options:
 `maxAnalyzedSentences` - Maximal number of sentences to be processed in the rank analysis. The analysis performs Cartesian join of sentences, giving  O(n^2) complexity. Hence processing large articles without limitation can lead to extremely high CPU load.
 
+=======
+### Options
+
+`maxAnalyzedSentences` - Maximal number of sentences to be processed in the rank analysis. The analysis performs Cartesian join of sentences, giving  O(n^2) complexity. Hence processing large articles without limitation can lead to extremely high CPU load.
+
+`shortenFactor` - Factor the text should be shortened by. (Summary Length / Text Length = Shorten-Factor) **Default**: 0.15
+
+>>>>>>> dev
 ## License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
