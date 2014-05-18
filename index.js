@@ -243,7 +243,7 @@
       selSentences.push([]);
       dict_p_arr.push([]);
     }
-    if (sentences.length > options.maxAnalyzedSentences) {
+    if (sentences.length > options.maxAnalyzedSentences && options.maxAnalyzedSentences > 0) {
       sentences = sentences.slice(0, +(options.maxAnalyzedSentences - 1) + 1 || 9e9);
     }
     dict = getSentencesRank(sentences);
@@ -268,7 +268,7 @@
       selSentencesWords += countWords(best_s);
       ignore.push(best_s);
     }
-    while (selSentencesWords < (totalWords * 0.15)) {
+    while (selSentencesWords < (totalWords * options.shortenFactor)) {
       max_score = 0;
       best_s = "";
       best_s_index = 0;
@@ -356,11 +356,17 @@
       callback = options;
       options = defaultOptions;
     }
-    if (!((options.maxAnalyzedSentences != null) && options.shortenFactor > 0)) {
+    if (options.maxAnalyzedSentences == null) {
+      options.maxAnalyzedSentences = defaultOptions.maxAnalyzedSentences;
+    }
+    if (options.shortenFactor == null) {
+      options.shortenFactor = defaultOptions.shortenFactor;
+    }
+    if (!IsNumeric(options.maxAnalyzedSentences)) {
       callback('Pass a valid number for the maximum number of sentences to be analyzed!', '', true);
     }
-    if (!((options.shortenFactor != null) && options.shortenFactor > 0 && options.shortenFactor < 0.8)) {
-      callback('Pass a factor between 0 and 0.8 the text will be shortened to!', '', true);
+    if (!(IsNumeric(options.shortenFactor) && options.shortenFactor > 0 && options.shortenFactor < 0.8)) {
+      callback('Pass a valid factor between 0 and 0.8 the text will be shortened to!', '', true);
     }
     if (typeof input === 'string') {
       return request(input, function(error, response, body) {

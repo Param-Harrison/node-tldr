@@ -248,7 +248,7 @@ main = (ch, options, callback) ->
 		selSentences.push []
 		dict_p_arr.push []
 
-	if sentences.length > options.maxAnalyzedSentences
+	if sentences.length > options.maxAnalyzedSentences and options.maxAnalyzedSentences > 0
 		sentences = sentences[0..options.maxAnalyzedSentences - 1]
 	dict = getSentencesRank sentences
 
@@ -271,7 +271,7 @@ main = (ch, options, callback) ->
 		selSentencesWords += countWords best_s
 		ignore.push best_s
 
-	while selSentencesWords < (totalWords * 0.15)
+	while selSentencesWords < (totalWords * options.shortenFactor)
 		max_score = 0
 		best_s = ""
 		best_s_index = 0
@@ -340,11 +340,14 @@ exports.summarize = (input, options, callback) ->
 		callback = options
 		options = defaultOptions
 
-	unless options.maxAnalyzedSentences?
+	options.maxAnalyzedSentences = defaultOptions.maxAnalyzedSentences unless options.maxAnalyzedSentences?
+	options.shortenFactor = defaultOptions.shortenFactor unless options.shortenFactor?
+
+	unless IsNumeric(options.maxAnalyzedSentences)
 		callback 'Pass a valid number for the maximum number of sentences to be analyzed!', '', true
 
-	unless options.shortenFactor? and options.shortenFactor > 0 and options.shortenFactor < 0.8
-		callback 'Pass a factor between 0 and 0.8 the text will be shortened to!', '', true
+	unless IsNumeric(options.shortenFactor) and options.shortenFactor > 0 and options.shortenFactor < 0.8
+		callback 'Pass a valid factor between 0 and 0.8 the text will be shortened to!', '', true
 
 	if typeof input is 'string'
 		request input, (error, response, body) ->
