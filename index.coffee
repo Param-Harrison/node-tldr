@@ -77,6 +77,7 @@ re = ///^(
 	\U0001D78A-\U0001D7A8\U0001D7AA-\U0001D7C2\U0001D7C4-\U0001D7C9
 ) ///
 
+# Default Options to be applied
 defaultOptions =
 	maxAnalyzedSentences: 0
 	shortenFactor: 0.15
@@ -85,9 +86,11 @@ defaultOptions =
 formatSentence = (sentence) ->
   sentence.replace re, null
 
+# Remove HTML Tags
 stripTags = (s) ->
 	s.replace /(<([^>]+)>)/ig, ""
 
+# Returns the intersecting objects of two arrays
 intersection = (arr1, arr2) ->
 	result = []
 	for a in arr1
@@ -95,11 +98,13 @@ intersection = (arr1, arr2) ->
 			result.push b
 	result
 
+# Count characters of a string
 countCharacters = (input, needle) ->
 	i = 0
 	i++ if letter is needle for letter in input.split ""
 	i
 
+# Counts the sentences by counting the punctuation marks
 countSentences = (input) ->
 	i = 0
 	for letter in input.split ""
@@ -107,12 +112,17 @@ countSentences = (input) ->
 			i++
 	i
 
+# Counts words
 countWords = (input) ->
 	input = input.replace /(^\s*)|(\s*$)/g, ""
 	input = input.replace /[ ]{2,}/g, " "
 	input = input.replace /\n /, "\n"
 	input.split(" ").length
 
+# Counts all the punctuation marks
+#
+# Many points, commas and colons are a sign of
+# non-spam text and therefore more valuable
 countPunctuation = (input) ->
 	i = 0
 	for letter in input.split ""
@@ -124,12 +134,14 @@ countPunctuation = (input) ->
 			i = i + 4
 	i
 
+# Calculate a score for paragraphs
 calculateWPRatio = (text) ->
 	sent_count = countSentences text
 	word_count = countWords text
 	punc_count = countPunctuation text
-	word_count / ((2 * sent_count) / punc_count)
+	word_count / ((2 * sent_count) / punc_count) # The number of words relative to the number of punctuation marks.
 
+# Checks if an array contains a given object
 arrayContainsObject = (arr, o) ->
 	output = false
 	for i in arr
@@ -137,10 +149,17 @@ arrayContainsObject = (arr, o) ->
 			output = true
 	output
 
+# Splits paragraphs to sentences
+# The function creates placeholders for expressions which contain dots without being ends of sentences
 splitContentToSentences = (content) ->
 	replace = []
+
+	# This is a RegEx for Dates
 	p = new RegExp '((?:(?:[0-2]?\\d{1})|(?:[3][01]{1})))(?![\\d])(\\.)(\\s+)((?:[a-z][a-z]+))(\\s+)((?:(?:[1]{1}\\d{1}\\d{1}\\d{1})|(?:[2]{1}\\d{3})))(?![\\d])', ["i"]
+
+	# This is a RegEx for months and titles
 	p2 = new RegExp '((?:(?:[0-2]?\\d{1})|(?:[3][01]{1})))(?![\\d])(\\.)(\\s+)((?:Jan(?:uary)?|Feb(?:ruary)?|Feb(?:ruar)?|Mar(?:ch)?|Mär(?:z)?|Apr(?:il)?|May|Mai|Jun(?:e)?|Jun(?:i)?|Jul(?:y)?|Jul(?:i)?|Aug(?:ust)?|Sep(?:tember)?|Sept|Oct(?:ober)?|Okt(?:ober)?|Nov(?:ember)?|Dez(?:ember)?|Dec(?:ember)?|Ms|Mr|Dr|Fr|Hr|etc))', ["i"]
+
 	i = 1
 	t = p.exec(content)
 
@@ -174,10 +193,12 @@ splitContentToSentences = (content) ->
 
 	arr
 
+# Calculates the percentage of letters
 percentageLetter = (input) ->
 	letters = (input.replace /[^A-Z]/gi, "").length
 	letters / input.length
 
+# Create an array of the words of a given string
 toWordArray = (input) ->
 	input = input.toString().replace /(^\s*)|(\s*$)/g, ""
 	input = input.replace /[ ]{2,}/g, " "
@@ -188,6 +209,7 @@ toWordArray = (input) ->
 	input = input.replace ":", ""
 	input.split " "
 
+# Intersects two sentences and returns the number of intersections (normalized)
 intersectSentences = (s1, s2) ->
 	s1_words = toWordArray s1
 	s2_words = toWordArray s2
@@ -195,6 +217,7 @@ intersectSentences = (s1, s2) ->
 	splice = (s1_words.length + s2_words.length) / 2
 	(intersect.splice 0, splice).length
 
+# Rank sentences by intersections
 getSentencesRank = (sentences) ->
 	sentences_dict = {}
 	for a in sentences
@@ -224,18 +247,23 @@ main = (ch, options, callback) ->
 	strip_s = ""
 	i = 0
 	sentencesByParagraph = []
+
+	# Pick all paragraphs in an HTML document
 	cand = $('p').toArray()
 
+	# Filters the elements by certain requirements
 	for element in cand
 		if $(element).find('div').length is 0 and $(element).find('img').length is 0 and $(element).find('script').length is 0 and $(element).find('ul').length is 0
 			text = (stripTags $(element).text()).trim()
 			sent_count = countSentences text
 			wp_ratio = calculateWPRatio text
 			letter_percentage = percentageLetter text
+			# Paragraphs should consist of more than 50% letters, more than one sentence and should reach a score of at least 60.
 			if letter_percentage > 0.5 and sent_count > 0 and wp_ratio > 60
 				paragraphs.push text
 				totalWords += countWords text
 
+	# Get all sentences by paragraph
 	for paragraph, i in paragraphs
 		arr = splitContentToSentences paragraph
 		sentencesByParagraph.push arr
@@ -248,10 +276,12 @@ main = (ch, options, callback) ->
 		selSentences.push []
 		dict_p_arr.push []
 
+	# Delete sentences if there are more than allowed
 	if sentences.length > options.maxAnalyzedSentences and options.maxAnalyzedSentences > 0
 		sentences = sentences[0..options.maxAnalyzedSentences - 1]
 	dict = getSentencesRank sentences
 
+	# Select the sentence with the highest score of each paragraph
 	for p, i in paragraphs
 		arr = sentencesByParagraph[i]
 		max_score = 0
@@ -271,6 +301,8 @@ main = (ch, options, callback) ->
 		selSentencesWords += countWords best_s
 		ignore.push best_s
 
+	# Check if the summary is already as long as allowed
+	# Otherwise add the highest scoring sentences until the required length is reached
 	while selSentencesWords < (totalWords * options.shortenFactor)
 		max_score = 0
 		best_s = ""
@@ -289,20 +321,24 @@ main = (ch, options, callback) ->
 		selSentencesWords += countWords best_s
 		ignore.push best_s
 
+	# Clean the sentences and connect them to a summary-string
 	for arr in selSentences
 		for s in arr
 			s = s.replace("...", ".").replace("..", ".").replace("  ", " ")
 			summary += s.trim() + ' '
 		summary = summary.trim() + '\n'
 
+	# Search for the title in a tagged h1-tag
 	title = (stripTags $('h1[itemprop="name"]').text()).trim()
 	unless title? and title.length > 0
+		# If there is no tagged h1-tag collect all h1- (and h2-) tags
 		items = []
 		items = $('h1').toArray()
 		items = items.concat $('h2').toArray()
 		highestScore = 0
 		highestItem = ''
 
+		# Filter the candidates and select one with the highest number of intersections with the text
 		for element in items
 			if $(element).find('div').length is 0 and $(element).find('img').length is 0 and $(element).find('script').length is 0 and $(element).find('ul').length is 0
 				text = (stripTags $(element).text()).trim()
@@ -313,14 +349,20 @@ main = (ch, options, callback) ->
 						highestScore = score
 						highestItem = text
 
+		# Get the meta-tag for the title if there were no candidates left
 		if !highestItem? and highestItem.length is 0
 			title = $('meta[name="title"]').attr 'content'
+
+			# Get the title-tag if the meta-tag is empty
 			unless title? and title.length > 0
 				title = $('title').text()
+
+			# Split the title by common splitting characters
 			title_comp = []
 			title_comp = title.split(/-|–|:|\|/)
 			title_comp = title.trim() for title in title_comp
 
+			# Search the longest component of the title-tag and make it the title
 			longest_streak = 0
 			for title in title_comp
 				words = countWords e
@@ -330,13 +372,14 @@ main = (ch, options, callback) ->
 		else
 			title = highestItem
 
+	# Emit an error if the page was not found
 	if title is "404 Not Found"
 		failure = true
 
 	callback (title.replace /\n/g, ''), summary.trim(), failure
 
 exports.summarize = (input, options, callback) ->
-	if arguments.length is 2
+	if arguments.length is 2 # No options-object was passed
 		callback = options
 		options = defaultOptions
 
@@ -349,7 +392,7 @@ exports.summarize = (input, options, callback) ->
 	if !IsNumeric(options.shortenFactor) or options.shortenFactor <= 0 or options.shortenFactor > 0.8
 		callback 'Pass a valid factor between 0 and 0.8 the text will be shortened to!', '', true
 
-	if typeof input is 'string'
+	if typeof input is 'string' # The input is a URL
 		request input, (error, response, body) ->
 			if body? and !error
 				ch = cheerio.load body
@@ -357,7 +400,7 @@ exports.summarize = (input, options, callback) ->
 					callback title, summary, failure
 			else
 				callback 'Failure while parsing', '', true
-	else if typeof input is 'object'
+	else if typeof input is 'object' # The input could be a cheerio object
 		main input, options, (title, summary, failure) ->
 			callback title, summary, failure
 	else
