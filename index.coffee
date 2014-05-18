@@ -343,10 +343,10 @@ exports.summarize = (input, options, callback) ->
 	options.maxAnalyzedSentences = defaultOptions.maxAnalyzedSentences unless options.maxAnalyzedSentences?
 	options.shortenFactor = defaultOptions.shortenFactor unless options.shortenFactor?
 
-	unless IsNumeric(options.maxAnalyzedSentences)
+	if !IsNumeric(options.maxAnalyzedSentences)
 		callback 'Pass a valid number for the maximum number of sentences to be analyzed!', '', true
 
-	unless IsNumeric(options.shortenFactor) and options.shortenFactor > 0 and options.shortenFactor < 0.8
+	if !IsNumeric(options.shortenFactor) or options.shortenFactor <= 0 or options.shortenFactor > 0.8
 		callback 'Pass a valid factor between 0 and 0.8 the text will be shortened to!', '', true
 
 	if typeof input is 'string'
