@@ -82,6 +82,13 @@ defaultOptions =
 	maxAnalyzedSentences: 0
 	shortenFactor: 0.15
 
+isNumeric = (obj) ->
+  (typeof obj) is "number"
+
+cleanSentence = (s) ->
+	s = s.replace /\n/g, ' '
+	s.replace /\s+/g, ' '
+
 # To support unicode characters.
 formatSentence = (sentence) ->
   sentence.replace re, null
@@ -89,6 +96,11 @@ formatSentence = (sentence) ->
 # Remove HTML Tags
 stripTags = (s) ->
 	s.replace /(<([^>]+)>)/ig, ""
+
+# Remove unnecessary information
+stripBrackets = (s) ->
+	s = s.replace /(\(([^>]+)\))/ig, ""
+	s.replace /(\[([^>]+)\])/ig, ""
 
 # Returns the intersecting objects of two arrays
 intersection = (arr1, arr2) ->
@@ -157,8 +169,11 @@ splitContentToSentences = (content) ->
 	# This is a RegEx for Dates
 	p = new RegExp '((?:(?:[0-2]?\\d{1})|(?:[3][01]{1})))(?![\\d])(\\.)(\\s+)((?:[a-z][a-z]+))(\\s+)((?:(?:[1]{1}\\d{1}\\d{1}\\d{1})|(?:[2]{1}\\d{3})))(?![\\d])', ["i"]
 
-	# This is a RegEx for months and titles
-	p2 = new RegExp '((?:(?:[0-2]?\\d{1})|(?:[3][01]{1})))(?![\\d])(\\.)(\\s+)((?:Jan(?:uary)?|Feb(?:ruary)?|Feb(?:ruar)?|Mar(?:ch)?|Mär(?:z)?|Apr(?:il)?|May|Mai|Jun(?:e)?|Jun(?:i)?|Jul(?:y)?|Jul(?:i)?|Aug(?:ust)?|Sep(?:tember)?|Sept|Oct(?:ober)?|Okt(?:ober)?|Nov(?:ember)?|Dez(?:ember)?|Dec(?:ember)?|Ms|Mr|Dr|Fr|Hr|etc))', ["i"]
+	# This is a RegEx for Dates with Months
+	p2 = new RegExp '((?:(?:[0-2]?\\d{1})|(?:[3][01]{1})))(?![\\d])(\\.)(\\s+)((?:Jan(?:uary)?|Feb(?:ruary)?|Feb(?:ruar)?|Mar(?:ch)?|Mär(?:z)?|Apr(?:il)?|May|Mai|Jun(?:e)?|Jun(?:i)?|Jul(?:y)?|Jul(?:i)?|Aug(?:ust)?|Sep(?:tember)?|Sept|Oct(?:ober)?|Okt(?:ober)?|Nov(?:ember)?|Dez(?:ember)?|Dec(?:ember)?))', ["i"]
+
+	# This is a RegEx for abbreviations
+	p3 = new RegExp '((Mr|Ms)(\\.))', ["i"]
 
 	i = 1
 	t = p.exec(content)
@@ -180,6 +195,16 @@ splitContentToSentences = (content) ->
 		]
 		content = content.replace t[0], ('%s' + i)
 		t = p2.exec(content)
+		i++
+
+	t = p3.exec(content)
+	while t?
+		replace.push [
+			'%s' + i
+			t[0]
+		]
+		content = content.replace t[0], ('%s' + i)
+		t = p3.exec(content)
 		i++
 
 	arr = []
@@ -231,7 +256,7 @@ getSentencesRank = (sentences) ->
 
 main = (ch, options, callback) ->
 	$ = ch
-	summary = ""
+	summary = []
 	title = ""
 	failure = false
 	totalWords = 0
@@ -254,7 +279,7 @@ main = (ch, options, callback) ->
 	# Filters the elements by certain requirements
 	for element in cand
 		if $(element).find('div').length is 0 and $(element).find('img').length is 0 and $(element).find('script').length is 0 and $(element).find('ul').length is 0
-			text = (stripTags $(element).text()).trim()
+			text = stripBrackets (stripTags $(element).text()).trim()
 			sent_count = countSentences text
 			wp_ratio = calculateWPRatio text
 			letter_percentage = percentageLetter text
@@ -321,27 +346,26 @@ main = (ch, options, callback) ->
 		selSentencesWords += countWords best_s
 		ignore.push best_s
 
-	# Clean the sentences and connect them to a summary-string
+	# Clean the sentences and connect them to a summary-array
 	for arr in selSentences
-		for s in arr
-			s = s.replace("...", ".").replace("..", ".").replace("  ", " ")
-			summary += s.trim() + ' '
-		summary = summary.trim() + '\n'
+		paragraph = arr.join " "
+		paragraph = paragraph.trim()
+		if paragraph? and paragraph.length > 0
+			summary.push paragraph
 
 	# Search for the title in a tagged h1-tag
-	title = (stripTags $('h1[itemprop="name"]').text()).trim()
+	title = stripBrackets (stripTags $('h1[itemprop="name"]').text()).trim()
 	unless title? and title.length > 0
 		# If there is no tagged h1-tag collect all h1- (and h2-) tags
 		items = []
 		items = $('h1').toArray()
-		items = items.concat $('h2').toArray()
 		highestScore = 0
 		highestItem = ''
 
 		# Filter the candidates and select one with the highest number of intersections with the text
 		for element in items
 			if $(element).find('div').length is 0 and $(element).find('img').length is 0 and $(element).find('script').length is 0 and $(element).find('ul').length is 0
-				text = (stripTags $(element).text()).trim()
+				text = stripBrackets (stripTags $(element).text()).trim()
 				if (percentageLetter text) > 0.5
 					score = 0
 					score += intersectSentences text, s for s in selSentences
@@ -376,7 +400,9 @@ main = (ch, options, callback) ->
 	if title is "404 Not Found"
 		failure = true
 
-	callback (title.replace /\n/g, ''), summary.trim(), failure
+	title = title
+
+	callback (cleanSentence title), summary, failure
 
 exports.summarize = (input, options, callback) ->
 	if arguments.length is 2 # No options-object was passed
@@ -386,10 +412,10 @@ exports.summarize = (input, options, callback) ->
 	options.maxAnalyzedSentences = defaultOptions.maxAnalyzedSentences unless options.maxAnalyzedSentences?
 	options.shortenFactor = defaultOptions.shortenFactor unless options.shortenFactor?
 
-	if !IsNumeric(options.maxAnalyzedSentences)
+	unless isNumeric options.maxAnalyzedSentences
 		callback 'Pass a valid number for the maximum number of sentences to be analyzed!', '', true
 
-	if !IsNumeric(options.shortenFactor) or options.shortenFactor <= 0 or options.shortenFactor > 0.8
+	if (!isNumeric options.shortenFactor) or options.shortenFactor <= 0 or options.shortenFactor > 0.8
 		callback 'Pass a valid factor between 0 and 0.8 the text will be shortened to!', '', true
 
 	if typeof input is 'string' # The input is a URL
@@ -399,9 +425,9 @@ exports.summarize = (input, options, callback) ->
 				main ch, options, (title, summary, failure) ->
 					callback title, summary, failure
 			else
-				callback 'Failure while parsing', '', true
+				callback 'Failure while parsing', [], true
 	else if typeof input is 'object' # The input could be a cheerio object
 		main input, options, (title, summary, failure) ->
 			callback title, summary, failure
 	else
-		callback 'False input data', '', true
+		callback 'False input data', [], true
