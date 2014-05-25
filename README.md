@@ -1,4 +1,4 @@
-# node-sumuparticles
+# node-sumuparticles [![Gittip](http://badgr.co/gittip/philplckthun.png)](https://www.gittip.com/philplckthun/)
 Node module summarizing web-articles using a naive algorithm, based off [node-summary](https://github.com/jbrooksuk/node-summary/). Even if it's based off node-summary it was rewritten and now only shares approximately 5% lines of code.
 
 ## Algorithm
@@ -24,7 +24,7 @@ summary.summarize(url, function(title, summary, failure) {
 	}
 
   console.log(title);
-	console.log(summary);
+	console.log(summary.join("\n"));
 });
 ```
 
