@@ -1,5 +1,5 @@
 # node-sumuparticles [![Gittip](http://badgr.co/gittip/philplckthun.png)](https://www.gittip.com/philplckthun/)
-Node module summarizing web-articles using a naive algorithm, based off [node-summary](https://github.com/jbrooksuk/node-summary/). Even if it's based off node-summary it was rewritten and now only shares approximately 5% lines of code.
+Node module summarizing web-articles using a naive algorithm, based on [node-summary](https://github.com/jbrooksuk/node-summary/). Even if it was derived from node-summary it was rewritten from scratch and now only shares approximately ~~5%~~ 0% lines of code.
 
 ## Algorithm
 The algorithm used is explained [here](http://thetokenizer.com/2013/04/28/build-your-own-summary-tool/). The intersections are calculated between all sentences instead between all sentences per paragraph.
