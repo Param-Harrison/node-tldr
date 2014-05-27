@@ -120,7 +120,7 @@ countCharacters = (input, needle) ->
 countSentences = (input) ->
 	i = 0
 	for letter in input.split ""
-		if letter is "!" or letter is "?" or letter is "." or letter is ":"
+		if letter is "!" or letter is "?" or letter is "."
 			i++
 	i
 
@@ -142,8 +142,6 @@ countPunctuation = (input) ->
 			i++
 		else if letter is "." or letter is ","
 			i = i + 2
-		else if letter is ":"
-			i = i + 4
 	i
 
 # Calculate a score for paragraphs

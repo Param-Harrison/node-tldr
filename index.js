@@ -76,7 +76,7 @@
     _ref = input.split("");
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       letter = _ref[_i];
-      if (letter === "!" || letter === "?" || letter === "." || letter === ":") {
+      if (letter === "!" || letter === "?" || letter === ".") {
         i++;
       }
     }
@@ -100,8 +100,6 @@
         i++;
       } else if (letter === "." || letter === ",") {
         i = i + 2;
-      } else if (letter === ":") {
-        i = i + 4;
       }
     }
     return i;
