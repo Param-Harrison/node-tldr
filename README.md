@@ -1,4 +1,4 @@
-# node-sumuparticles [![Gittip](http://badgr.co/gittip/philplckthun.png)](https://www.gittip.com/philplckthun/)
+# node-tldr [![Gittip](http://badgr.co/gittip/philplckthun.png)](https://www.gittip.com/philplckthun/)
 Node module summarizing web-articles using a naive algorithm, based on [node-summary](https://github.com/jbrooksuk/node-summary/). Even if it was derived from node-summary it was rewritten from scratch and now only shares approximately ~~5%~~ 0% lines of code.
 
 ## Algorithm
@@ -17,7 +17,7 @@ npm install node-sumuparticles
 ## Usage
 
 ```javascript
-var summary = require('node-sumuparticles');
+var summary = require('node-tldr');
 summary.summarize(url, function(title, summary, failure) {
 	if (failure) {
 		console.log("There was an error.");

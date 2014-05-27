@@ -1,9 +1,10 @@
+
 {
-  "name": "node-sumuparticles",
+  "name": "node-tldr",
   "version": "0.1.4",
   "description": "Node module summarizing web-articles using a naive algorithm.",
   "main": "./index.js",
-  "repository": "git://github.com/philplckthun/node-sumuparticles.git",
+  "repository": "git://github.com/philplckthun/node-tldr.git",
   "dependencies": {
     "cheerio": "*",
     "request": "*"
