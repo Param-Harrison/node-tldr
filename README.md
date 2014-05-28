@@ -38,7 +38,7 @@ For *object* you can either pass a string containing an URL, or an already fetch
 
 `maxAnalyzedSentences` - Maximal number of sentences to be processed in the rank analysis. The analysis performs Cartesian join of sentences, giving  O(n^2) complexity. Hence processing large articles without limitation can lead to extremely high CPU load.
 
-`shortenFactor` - Factor the text should be shortened by. (Summary Length / Text Length = Shorten-Factor) **Default**: 0.20
+`shortenFactor` - Factor the text should be shortened by. (Summary Length / Text Length = Shorten-Factor) **Default**: 0.30
 
 ## License
 
