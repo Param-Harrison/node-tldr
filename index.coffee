@@ -80,7 +80,7 @@ re = ///^(
 # Default Options to be applied
 defaultOptions =
 	maxAnalyzedSentences: 0
-	shortenFactor: 0.20
+	shortenFactor: 0.30
 
 isNumeric = (obj) ->
   (typeof obj) is "number"
@@ -265,8 +265,6 @@ main = (ch, options, callback) ->
 	selSentences = []
 	selSentencesWords = 0
 	ignore = []
-	dict_p_arr = []
-	dict_p_arr_balance = []
 	strip_s = ""
 	i = 0
 	sentencesByParagraph = []
@@ -366,40 +364,11 @@ main = (ch, options, callback) ->
 
 	for p in paragraphs
 		selSentences.push []
-		dict_p_arr.push []
 
 	# Delete sentences if there are more than allowed
 	if sentences.length > options.maxAnalyzedSentences and options.maxAnalyzedSentences > 0
 		sentences = sentences[0..options.maxAnalyzedSentences - 1]
 	dict = getSentencesRank sentences
-
-	# Calculate average sentences per paragraphs of the whole text
-	overallAverageSentencesParagraph = 0
-	overallAverageSentencesParagraph += countSentences text for text in paragraphs
-	overallAverageSentencesParagraph = overallAverageSentencesParagraph / paragraphs.length
-
-
-	# Select the sentence with the highest score of each paragraph
-	for p, i in paragraphs
-		arr = sentencesByParagraph[i]
-		max_score = 0
-		best_s = ""
-		best_s_index = 0
-		dict_p = getSentencesRank arr
-		dict_p_arr[i] = dict_p
-		dict_p_arr_balance[i] = sentences.length / arr.length
-
-		for s in arr
-			strip_s = formatSentence s
-			if s? and dict_p[strip_s] > max_score and !(arrayContainsObject ignore, s)
-				max_score = dict_p[strip_s]
-				best_s = s
-
-		# Only if the overall average of sentences per paragraph is smaller than 3.5
-		if overallAverageSentencesParagraph > 2
-			selSentences[i].push best_s
-			selSentencesWords += countWords best_s
-			ignore.push best_s
 
 	# Check if the summary is already as long as allowed
 	# Otherwise add the highest scoring sentences until the required length is reached
@@ -411,15 +380,9 @@ main = (ch, options, callback) ->
 		for s, i in sentences
 			strip_s = formatSentence s
 			if s? and dict[strip_s] > max_score and !(arrayContainsObject ignore, s)
-				if overallAverageSentencesParagraph > 2
-					if (dict_p_arr[sentencesIndex[i]][strip_s] * dict_p_arr_balance[sentencesIndex[i]]) < (dict[strip_s])
-						max_score = dict[strip_s]
-						best_s = sentences[i]
-						best_s_index = sentencesIndex[i]
-				else
-					max_score = dict[strip_s]
-					best_s = sentences[i]
-					best_s_index = sentencesIndex[i]
+				max_score = dict[strip_s]
+				best_s = sentences[i]
+				best_s_index = sentencesIndex[i]
 
 		break if max_score is 0
 

@@ -14,7 +14,7 @@
 
   defaultOptions = {
     maxAnalyzedSentences: 0,
-    shortenFactor: 0.20
+    shortenFactor: 0.30
   };
 
   isNumeric = function(obj) {
@@ -214,7 +214,7 @@
   };
 
   main = function(ch, options, callback) {
-    var $, arr, articleBody, averageLetterPercentage, averageSentences, best_s, best_s_index, cand, dict, dict_p, dict_p_arr, dict_p_arr_balance, element, failure, highestItem, highestScore, i, ignore, items, letter_percentage, longest_streak, max_score, minimumWP, overallAverageSentencesParagraph, p, paragraph, paragraphs, paragraphsIgnore, paragraphsParsed, parents, parentsScore, parentsScoreAverage, s, score, selSentences, selSentencesWords, sent_count, sentences, sentencesByParagraph, sentencesIndex, strip_s, summary, temp, text, title, title_comp, totalWords, words, wp_ratio, _aa, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len12, _len13, _len14, _len15, _len16, _len17, _len18, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _ref, _s, _t, _u, _v, _w, _x, _y, _z;
+    var $, arr, articleBody, averageLetterPercentage, averageSentences, best_s, best_s_index, cand, dict, element, failure, highestItem, highestScore, i, ignore, items, letter_percentage, longest_streak, max_score, minimumWP, p, paragraph, paragraphs, paragraphsIgnore, paragraphsParsed, parents, parentsScore, parentsScoreAverage, s, score, selSentences, selSentencesWords, sent_count, sentences, sentencesByParagraph, sentencesIndex, strip_s, summary, temp, text, title, title_comp, totalWords, words, wp_ratio, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len12, _len13, _len14, _len15, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _ref, _s, _t, _u, _v, _w, _x;
     $ = ch;
     summary = [];
     title = "";
@@ -227,8 +227,6 @@
     selSentences = [];
     selSentencesWords = 0;
     ignore = [];
-    dict_p_arr = [];
-    dict_p_arr_balance = [];
     strip_s = "";
     i = 0;
     sentencesByParagraph = [];
@@ -334,49 +332,19 @@
     for (_r = 0, _len9 = paragraphs.length; _r < _len9; _r++) {
       p = paragraphs[_r];
       selSentences.push([]);
-      dict_p_arr.push([]);
     }
     if (sentences.length > options.maxAnalyzedSentences && options.maxAnalyzedSentences > 0) {
       sentences = sentences.slice(0, +(options.maxAnalyzedSentences - 1) + 1 || 9e9);
     }
     dict = getSentencesRank(sentences);
-    overallAverageSentencesParagraph = 0;
-    for (_s = 0, _len10 = paragraphs.length; _s < _len10; _s++) {
-      text = paragraphs[_s];
-      overallAverageSentencesParagraph += countSentences(text);
-    }
-    overallAverageSentencesParagraph = overallAverageSentencesParagraph / paragraphs.length;
-    for (i = _t = 0, _len11 = paragraphs.length; _t < _len11; i = ++_t) {
-      p = paragraphs[i];
-      arr = sentencesByParagraph[i];
-      max_score = 0;
-      best_s = "";
-      best_s_index = 0;
-      dict_p = getSentencesRank(arr);
-      dict_p_arr[i] = dict_p;
-      dict_p_arr_balance[i] = sentences.length / arr.length;
-      for (_u = 0, _len12 = arr.length; _u < _len12; _u++) {
-        s = arr[_u];
-        strip_s = formatSentence(s);
-        if ((s != null) && dict_p[strip_s] > max_score && !(arrayContainsObject(ignore, s))) {
-          max_score = dict_p[strip_s];
-          best_s = s;
-        }
-      }
-      if (overallAverageSentencesParagraph > 2) {
-        selSentences[i].push(best_s);
-        selSentencesWords += countWords(best_s);
-        ignore.push(best_s);
-      }
-    }
     while (selSentencesWords < (totalWords * options.shortenFactor)) {
       max_score = 0;
       best_s = "";
       best_s_index = 0;
-      for (i = _v = 0, _len13 = sentences.length; _v < _len13; i = ++_v) {
+      for (i = _s = 0, _len10 = sentences.length; _s < _len10; i = ++_s) {
         s = sentences[i];
         strip_s = formatSentence(s);
-        if ((s != null) && dict[strip_s] > max_score && !(arrayContainsObject(ignore, s)) && (dict_p_arr[sentencesIndex[i]][strip_s] * dict_p_arr_balance[sentencesIndex[i]]) < dict[strip_s]) {
+        if ((s != null) && dict[strip_s] > max_score && !(arrayContainsObject(ignore, s))) {
           max_score = dict[strip_s];
           best_s = sentences[i];
           best_s_index = sentencesIndex[i];
@@ -389,8 +357,8 @@
       selSentencesWords += countWords(best_s);
       ignore.push(best_s);
     }
-    for (_w = 0, _len14 = selSentences.length; _w < _len14; _w++) {
-      arr = selSentences[_w];
+    for (_t = 0, _len11 = selSentences.length; _t < _len11; _t++) {
+      arr = selSentences[_t];
       paragraph = arr.join(" ");
       paragraph = paragraph.trim();
       if ((paragraph != null) && paragraph.length > 0) {
@@ -409,14 +377,14 @@
       items = $('h1, h2').toArray();
       highestScore = 0;
       highestItem = '';
-      for (_x = 0, _len15 = items.length; _x < _len15; _x++) {
-        element = items[_x];
+      for (_u = 0, _len12 = items.length; _u < _len12; _u++) {
+        element = items[_u];
         if ($(element).find('div').length === 0 && $(element).find('img').length === 0 && $(element).find('script').length === 0 && $(element).find('ul').length === 0) {
           text = stripBrackets((stripTags($(element).text())).trim());
           if ((percentageLetter(text)) > 0.5) {
             score = 0;
-            for (_y = 0, _len16 = selSentences.length; _y < _len16; _y++) {
-              s = selSentences[_y];
+            for (_v = 0, _len13 = selSentences.length; _v < _len13; _v++) {
+              s = selSentences[_v];
               score += intersectSentences(text, s);
             }
             if (score > highestScore) {
@@ -433,13 +401,13 @@
         }
         title_comp = [];
         title_comp = title.split(/-|–|:|\|/);
-        for (_z = 0, _len17 = title_comp.length; _z < _len17; _z++) {
-          title = title_comp[_z];
+        for (_w = 0, _len14 = title_comp.length; _w < _len14; _w++) {
+          title = title_comp[_w];
           title_comp = title.trim();
         }
         longest_streak = 0;
-        for (_aa = 0, _len18 = title_comp.length; _aa < _len18; _aa++) {
-          title = title_comp[_aa];
+        for (_x = 0, _len15 = title_comp.length; _x < _len15; _x++) {
+          title = title_comp[_x];
           words = countWords(e);
           if (words > longest_streak) {
             longest_streak = words;
