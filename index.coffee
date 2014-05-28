@@ -277,6 +277,11 @@ main = (ch, options, callback) ->
 		cand = $(articleBody).children('p').toArray()
 		if cand.length is 0
 			cand = $(articleBody).text().split '<br><br>'
+		else
+			temp = []
+			for element in cand
+				temp.push $(element).text()
+			cand = temp
 		for element in cand
 			# Filters the elements by certain requirements
 			if (element.indexOf '<div') is -1 and (element.indexOf '<img') is -1 and (element.indexOf '<script') is -1 and (element.indexOf '<ul') is -1

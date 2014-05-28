@@ -214,7 +214,7 @@
   };
 
   main = function(ch, options, callback) {
-    var $, arr, articleBody, averageLetterPercentage, averageSentences, best_s, best_s_index, cand, dict, dict_p, dict_p_arr, dict_p_arr_balance, element, failure, highestItem, highestScore, i, ignore, items, letter_percentage, longest_streak, max_score, minimumWP, p, paragraph, paragraphs, paragraphsIgnore, paragraphsParsed, parents, parentsScore, parentsScoreAverage, s, score, selSentences, selSentencesWords, sent_count, sentences, sentencesByParagraph, sentencesIndex, strip_s, summary, text, title, title_comp, totalWords, words, wp_ratio, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len12, _len13, _len14, _len15, _len16, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _ref, _s, _t, _u, _v, _w, _x, _y;
+    var $, arr, articleBody, averageLetterPercentage, averageSentences, best_s, best_s_index, cand, dict, dict_p, dict_p_arr, dict_p_arr_balance, element, failure, highestItem, highestScore, i, ignore, items, letter_percentage, longest_streak, max_score, minimumWP, p, paragraph, paragraphs, paragraphsIgnore, paragraphsParsed, parents, parentsScore, parentsScoreAverage, s, score, selSentences, selSentencesWords, sent_count, sentences, sentencesByParagraph, sentencesIndex, strip_s, summary, temp, text, title, title_comp, totalWords, words, wp_ratio, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len12, _len13, _len14, _len15, _len16, _len17, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _ref, _s, _t, _u, _v, _w, _x, _y, _z;
     $ = ch;
     summary = [];
     title = "";
@@ -237,9 +237,16 @@
       cand = $(articleBody).children('p').toArray();
       if (cand.length === 0) {
         cand = $(articleBody).text().split('<br><br>');
+      } else {
+        temp = [];
+        for (_i = 0, _len = cand.length; _i < _len; _i++) {
+          element = cand[_i];
+          temp.push($(element).text());
+        }
+        cand = temp;
       }
-      for (_i = 0, _len = cand.length; _i < _len; _i++) {
-        element = cand[_i];
+      for (_j = 0, _len1 = cand.length; _j < _len1; _j++) {
+        element = cand[_j];
         if ((element.indexOf('<div')) === -1 && (element.indexOf('<img')) === -1 && (element.indexOf('<script')) === -1 && (element.indexOf('<ul')) === -1) {
           text = stripBrackets((stripTags(element)).trim());
           sent_count = countSentences(text);
@@ -256,18 +263,18 @@
       parents = [];
       parentsScore = [];
       parentsScoreAverage = 0;
-      for (_j = 0, _len1 = cand.length; _j < _len1; _j++) {
-        p = cand[_j];
+      for (_k = 0, _len2 = cand.length; _k < _len2; _k++) {
+        p = cand[_k];
         parents.push($(p).parent());
       }
-      for (_k = 0, _len2 = parents.length; _k < _len2; _k++) {
-        p = parents[_k];
+      for (_l = 0, _len3 = parents.length; _l < _len3; _l++) {
+        p = parents[_l];
         score = $(p).children('p').length;
         parentsScoreAverage += score;
         parentsScore.push(score);
       }
       parentsScoreAverage = parentsScoreAverage / parentsScore.length;
-      for (i = _l = 0, _len3 = parentsScore.length; _l < _len3; i = ++_l) {
+      for (i = _m = 0, _len4 = parentsScore.length; _m < _len4; i = ++_m) {
         score = parentsScore[i];
         if (score > parentsScoreAverage) {
           paragraphsIgnore = [];
@@ -275,7 +282,7 @@
           averageSentences = 0;
           averageLetterPercentage = 0;
           _ref = $(parents[i]).children('p').toArray();
-          for (i = _m = 0, _len4 = _ref.length; _m < _len4; i = ++_m) {
+          for (i = _n = 0, _len5 = _ref.length; _n < _len5; i = ++_n) {
             element = _ref[i];
             if ($(element).find('div').length === 0 && $(element).find('img').length === 0 && $(element).find('script').length === 0 && $(element).find('ul').length === 0) {
               text = cleanSentence((stripBrackets(stripTags($(element).text()))).trim());
@@ -299,8 +306,8 @@
             averageLetterPercentage = 1;
           }
           minimumWP = averageSentences * 20 * averageLetterPercentage;
-          for (_n = 0, _len5 = paragraphsParsed.length; _n < _len5; _n++) {
-            p = paragraphsParsed[_n];
+          for (_o = 0, _len6 = paragraphsParsed.length; _o < _len6; _o++) {
+            p = paragraphsParsed[_o];
             if (p[1] > minimumWP) {
               paragraphs.push(p[0]);
               paragraphsIgnore.push(p[0]);
@@ -312,20 +319,20 @@
         }
       }
     }
-    for (i = _o = 0, _len6 = paragraphs.length; _o < _len6; i = ++_o) {
+    for (i = _p = 0, _len7 = paragraphs.length; _p < _len7; i = ++_p) {
       paragraph = paragraphs[i];
       arr = splitContentToSentences(paragraph);
       sentencesByParagraph.push(arr);
       if (arr.length > 1) {
-        for (_p = 0, _len7 = arr.length; _p < _len7; _p++) {
-          s = arr[_p];
+        for (_q = 0, _len8 = arr.length; _q < _len8; _q++) {
+          s = arr[_q];
           sentences.push(s);
           sentencesIndex.push(i);
         }
       }
     }
-    for (_q = 0, _len8 = paragraphs.length; _q < _len8; _q++) {
-      p = paragraphs[_q];
+    for (_r = 0, _len9 = paragraphs.length; _r < _len9; _r++) {
+      p = paragraphs[_r];
       selSentences.push([]);
       dict_p_arr.push([]);
     }
@@ -333,7 +340,7 @@
       sentences = sentences.slice(0, +(options.maxAnalyzedSentences - 1) + 1 || 9e9);
     }
     dict = getSentencesRank(sentences);
-    for (i = _r = 0, _len9 = paragraphs.length; _r < _len9; i = ++_r) {
+    for (i = _s = 0, _len10 = paragraphs.length; _s < _len10; i = ++_s) {
       p = paragraphs[i];
       arr = sentencesByParagraph[i];
       max_score = 0;
@@ -342,8 +349,8 @@
       dict_p = getSentencesRank(arr);
       dict_p_arr[i] = dict_p;
       dict_p_arr_balance[i] = sentences.length / arr.length;
-      for (_s = 0, _len10 = arr.length; _s < _len10; _s++) {
-        s = arr[_s];
+      for (_t = 0, _len11 = arr.length; _t < _len11; _t++) {
+        s = arr[_t];
         strip_s = formatSentence(s);
         if ((s != null) && dict_p[strip_s] > max_score && !(arrayContainsObject(ignore, s))) {
           max_score = dict_p[strip_s];
@@ -358,7 +365,7 @@
       max_score = 0;
       best_s = "";
       best_s_index = 0;
-      for (i = _t = 0, _len11 = sentences.length; _t < _len11; i = ++_t) {
+      for (i = _u = 0, _len12 = sentences.length; _u < _len12; i = ++_u) {
         s = sentences[i];
         strip_s = formatSentence(s);
         if ((s != null) && dict[strip_s] > max_score && !(arrayContainsObject(ignore, s)) && (dict_p_arr[sentencesIndex[i]][strip_s] * dict_p_arr_balance[sentencesIndex[i]]) < dict[strip_s]) {
@@ -374,8 +381,8 @@
       selSentencesWords += countWords(best_s);
       ignore.push(best_s);
     }
-    for (_u = 0, _len12 = selSentences.length; _u < _len12; _u++) {
-      arr = selSentences[_u];
+    for (_v = 0, _len13 = selSentences.length; _v < _len13; _v++) {
+      arr = selSentences[_v];
       paragraph = arr.join(" ");
       paragraph = paragraph.trim();
       if ((paragraph != null) && paragraph.length > 0) {
@@ -394,14 +401,14 @@
       items = $('h1, h2').toArray();
       highestScore = 0;
       highestItem = '';
-      for (_v = 0, _len13 = items.length; _v < _len13; _v++) {
-        element = items[_v];
+      for (_w = 0, _len14 = items.length; _w < _len14; _w++) {
+        element = items[_w];
         if ($(element).find('div').length === 0 && $(element).find('img').length === 0 && $(element).find('script').length === 0 && $(element).find('ul').length === 0) {
           text = stripBrackets((stripTags($(element).text())).trim());
           if ((percentageLetter(text)) > 0.5) {
             score = 0;
-            for (_w = 0, _len14 = selSentences.length; _w < _len14; _w++) {
-              s = selSentences[_w];
+            for (_x = 0, _len15 = selSentences.length; _x < _len15; _x++) {
+              s = selSentences[_x];
               score += intersectSentences(text, s);
             }
             if (score > highestScore) {
@@ -418,13 +425,13 @@
         }
         title_comp = [];
         title_comp = title.split(/-|–|:|\|/);
-        for (_x = 0, _len15 = title_comp.length; _x < _len15; _x++) {
-          title = title_comp[_x];
+        for (_y = 0, _len16 = title_comp.length; _y < _len16; _y++) {
+          title = title_comp[_y];
           title_comp = title.trim();
         }
         longest_streak = 0;
-        for (_y = 0, _len16 = title_comp.length; _y < _len16; _y++) {
-          title = title_comp[_y];
+        for (_z = 0, _len17 = title_comp.length; _z < _len17; _z++) {
+          title = title_comp[_z];
           words = countWords(e);
           if (words > longest_streak) {
             longest_streak = words;
