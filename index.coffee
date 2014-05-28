@@ -410,10 +410,16 @@ main = (ch, options, callback) ->
 
 		for s, i in sentences
 			strip_s = formatSentence s
-			if s? and dict[strip_s] > max_score and !(arrayContainsObject ignore, s) and (dict_p_arr[sentencesIndex[i]][strip_s] * dict_p_arr_balance[sentencesIndex[i]]) < (dict[strip_s])
-				max_score = dict[strip_s]
-				best_s = sentences[i]
-				best_s_index = sentencesIndex[i]
+			if s? and dict[strip_s] > max_score and !(arrayContainsObject ignore, s)
+				if overallAverageSentencesParagraph > 2
+					if (dict_p_arr[sentencesIndex[i]][strip_s] * dict_p_arr_balance[sentencesIndex[i]]) < (dict[strip_s])
+						max_score = dict[strip_s]
+						best_s = sentences[i]
+						best_s_index = sentencesIndex[i]
+				else
+					max_score = dict[strip_s]
+					best_s = sentences[i]
+					best_s_index = sentencesIndex[i]
 
 		break if max_score is 0
 
