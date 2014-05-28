@@ -275,19 +275,19 @@ main = (ch, options, callback) ->
 	articleBody = $('[itemprop="articleBody"]')
 	if articleBody.length > 0
 		cand = $(articleBody).children('p').toArray()
-		if cand.length == 0
+		if cand.length is 0
 			cand = $(articleBody).text().split '<br><br>'
-			for element in cand
-				# Filters the elements by certain requirements
-				if (element.indexOf '<div') is -1 and (element.indexOf '<img') is -1 and (element.indexOf '<script') is -1 and (element.indexOf '<ul') is -1
-					text = stripBrackets (stripTags element).trim()
-					sent_count = countSentences text
-					wp_ratio = calculateWPRatio text
-					letter_percentage = percentageLetter text
-					# Paragraphs should consist of more than 50% letters, more than one sentence and should reach a score of at least 60.
-					if letter_percentage > 0.5 and sent_count > 0 and wp_ratio > 60
-						paragraphs.push cleanSentence text.trim()
-						totalWords += countWords text
+		for element in cand
+			# Filters the elements by certain requirements
+			if (element.indexOf '<div') is -1 and (element.indexOf '<img') is -1 and (element.indexOf '<script') is -1 and (element.indexOf '<ul') is -1
+				text = stripBrackets (stripTags element).trim()
+				sent_count = countSentences text
+				wp_ratio = calculateWPRatio text
+				letter_percentage = percentageLetter text
+				# Paragraphs should consist of more than 50% letters, more than one sentence and should reach a score of at least 60.
+				if letter_percentage > 0.5 and sent_count > 0 and wp_ratio > 60
+					paragraphs.push cleanSentence text.trim()
+					totalWords += countWords text
 	else
 		cand = $('p').toArray()
 		parents = []

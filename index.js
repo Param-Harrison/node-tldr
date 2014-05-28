@@ -237,17 +237,17 @@
       cand = $(articleBody).children('p').toArray();
       if (cand.length === 0) {
         cand = $(articleBody).text().split('<br><br>');
-        for (_i = 0, _len = cand.length; _i < _len; _i++) {
-          element = cand[_i];
-          if ((element.indexOf('<div')) === -1 && (element.indexOf('<img')) === -1 && (element.indexOf('<script')) === -1 && (element.indexOf('<ul')) === -1) {
-            text = stripBrackets((stripTags(element)).trim());
-            sent_count = countSentences(text);
-            wp_ratio = calculateWPRatio(text);
-            letter_percentage = percentageLetter(text);
-            if (letter_percentage > 0.5 && sent_count > 0 && wp_ratio > 60) {
-              paragraphs.push(cleanSentence(text.trim()));
-              totalWords += countWords(text);
-            }
+      }
+      for (_i = 0, _len = cand.length; _i < _len; _i++) {
+        element = cand[_i];
+        if ((element.indexOf('<div')) === -1 && (element.indexOf('<img')) === -1 && (element.indexOf('<script')) === -1 && (element.indexOf('<ul')) === -1) {
+          text = stripBrackets((stripTags(element)).trim());
+          sent_count = countSentences(text);
+          wp_ratio = calculateWPRatio(text);
+          letter_percentage = percentageLetter(text);
+          if (letter_percentage > 0.5 && sent_count > 0 && wp_ratio > 60) {
+            paragraphs.push(cleanSentence(text.trim()));
+            totalWords += countWords(text);
           }
         }
       }
