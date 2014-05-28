@@ -309,6 +309,7 @@ main = (ch, options, callback) ->
 				paragraphsIgnore = []
 				paragraphsParsed = []
 				averageSentences = 0
+				averageLetterPercentage = 0
 				# Analyze all paragraphs
 				for element, i in $(parents[i]).children('p').toArray()
 					# Filters the elements by certain requirements
@@ -318,10 +319,11 @@ main = (ch, options, callback) ->
 						# TODO: This is necessary until a way is found to eliminate duplicate parents
 						unless arrayContainsObject(paragraphsIgnore, text)
 							letter_percentage = percentageLetter text
-							# Filters the paragraphs by whether they are mostly build up of numbers
+							# Filters the paragraphs by whether they are mostly build up of letters
 							if letter_percentage > 0.5
 								wp_ratio = calculateWPRatio text
 								averageSentences += countSentences text
+								averageLetterPercentage += letter_percentage
 								# Save the WP-Ratio
 								paragraphsParsed.push [
 									text,
@@ -330,8 +332,13 @@ main = (ch, options, callback) ->
 				# Calculate the average number of sentences
 				if averageSentences > 0
 					averageSentences = averageSentences / paragraphsParsed.length
+				# Calculate the average percentage of letters
+				if averageLetterPercentage > 0
+					averageLetterPercentage = 1 + averageLetterPercentage / paragraphsParsed.length
+				else
+					averageLetterPercentage = 1
 				# The minimum required WP-Ratio is 20 times the number of average sentences
-				minimumWP = averageSentences * 20
+				minimumWP = averageSentences * 20 * averageLetterPercentage
 				for p in paragraphsParsed
 					if p[1] > minimumWP
 						paragraphs.push p[0]

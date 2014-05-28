@@ -214,7 +214,7 @@
   };
 
   main = function(ch, options, callback) {
-    var $, arr, articleBody, averageSentences, best_s, best_s_index, cand, dict, dict_p, dict_p_arr, dict_p_arr_balance, element, failure, highestItem, highestScore, i, ignore, items, letter_percentage, longest_streak, max_score, minimumWP, p, paragraph, paragraphs, paragraphsIgnore, paragraphsParsed, parents, parentsScore, parentsScoreAverage, s, score, selSentences, selSentencesWords, sent_count, sentences, sentencesByParagraph, sentencesIndex, strip_s, summary, text, title, title_comp, totalWords, words, wp_ratio, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len12, _len13, _len14, _len15, _len16, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _ref, _s, _t, _u, _v, _w, _x, _y;
+    var $, arr, articleBody, averageLetterPercentage, averageSentences, best_s, best_s_index, cand, dict, dict_p, dict_p_arr, dict_p_arr_balance, element, failure, highestItem, highestScore, i, ignore, items, letter_percentage, longest_streak, max_score, minimumWP, p, paragraph, paragraphs, paragraphsIgnore, paragraphsParsed, parents, parentsScore, parentsScoreAverage, s, score, selSentences, selSentencesWords, sent_count, sentences, sentencesByParagraph, sentencesIndex, strip_s, summary, text, title, title_comp, totalWords, words, wp_ratio, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len12, _len13, _len14, _len15, _len16, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _ref, _s, _t, _u, _v, _w, _x, _y;
     $ = ch;
     summary = [];
     title = "";
@@ -273,6 +273,7 @@
           paragraphsIgnore = [];
           paragraphsParsed = [];
           averageSentences = 0;
+          averageLetterPercentage = 0;
           _ref = $(parents[i]).children('p').toArray();
           for (i = _m = 0, _len4 = _ref.length; _m < _len4; i = ++_m) {
             element = _ref[i];
@@ -283,6 +284,7 @@
                 if (letter_percentage > 0.5) {
                   wp_ratio = calculateWPRatio(text);
                   averageSentences += countSentences(text);
+                  averageLetterPercentage += letter_percentage;
                   paragraphsParsed.push([text, wp_ratio]);
                 }
               }
@@ -291,7 +293,12 @@
           if (averageSentences > 0) {
             averageSentences = averageSentences / paragraphsParsed.length;
           }
-          minimumWP = averageSentences * 20;
+          if (averageLetterPercentage > 0) {
+            averageLetterPercentage = 1 + averageLetterPercentage / paragraphsParsed.length;
+          } else {
+            averageLetterPercentage = 1;
+          }
+          minimumWP = averageSentences * 20 * averageLetterPercentage;
           for (_n = 0, _len5 = paragraphsParsed.length; _n < _len5; _n++) {
             p = paragraphsParsed[_n];
             if (p[1] > minimumWP) {
