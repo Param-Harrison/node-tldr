@@ -373,25 +373,32 @@ main = (ch, options, callback) ->
 		sentences = sentences[0..options.maxAnalyzedSentences - 1]
 	dict = getSentencesRank sentences
 
+	# Calculate average sentences per paragraphs of the whole text
+	overallAverageSentencesParagraph = 0
+	overallAverageSentencesParagraph += countSentences text for text in paragraphs
+	overallAverageSentencesParagraph = overallAverageSentencesParagraph / paragraphs.length
+
 	# Select the sentence with the highest score of each paragraph
-	for p, i in paragraphs
-		arr = sentencesByParagraph[i]
-		max_score = 0
-		best_s = ""
-		best_s_index = 0
-		dict_p = getSentencesRank arr
-		dict_p_arr[i] = dict_p
-		dict_p_arr_balance[i] = sentences.length / arr.length
+	# Only if the overall average of sentences per paragraph is smaller than 3.5
+	if overallAverageSentencesParagraph < 3.5
+		for p, i in paragraphs
+			arr = sentencesByParagraph[i]
+			max_score = 0
+			best_s = ""
+			best_s_index = 0
+			dict_p = getSentencesRank arr
+			dict_p_arr[i] = dict_p
+			dict_p_arr_balance[i] = sentences.length / arr.length
 
-		for s in arr
-			strip_s = formatSentence s
-			if s? and dict_p[strip_s] > max_score and !(arrayContainsObject ignore, s)
-				max_score = dict_p[strip_s]
-				best_s = s
+			for s in arr
+				strip_s = formatSentence s
+				if s? and dict_p[strip_s] > max_score and !(arrayContainsObject ignore, s)
+					max_score = dict_p[strip_s]
+					best_s = s
 
-		selSentences[i].push best_s
-		selSentencesWords += countWords best_s
-		ignore.push best_s
+			selSentences[i].push best_s
+			selSentencesWords += countWords best_s
+			ignore.push best_s
 
 	# Check if the summary is already as long as allowed
 	# Otherwise add the highest scoring sentences until the required length is reached
