@@ -346,7 +346,7 @@
       overallAverageSentencesParagraph += countSentences(text);
     }
     overallAverageSentencesParagraph = overallAverageSentencesParagraph / paragraphs.length;
-    if (overallAverageSentencesParagraph < 3.5) {
+    if (overallAverageSentencesParagraph > 2.5) {
       for (i = _t = 0, _len11 = paragraphs.length; _t < _len11; i = ++_t) {
         p = paragraphs[i];
         arr = sentencesByParagraph[i];

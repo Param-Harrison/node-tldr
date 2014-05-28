@@ -378,9 +378,9 @@ main = (ch, options, callback) ->
 	overallAverageSentencesParagraph += countSentences text for text in paragraphs
 	overallAverageSentencesParagraph = overallAverageSentencesParagraph / paragraphs.length
 
-	# Select the sentence with the highest score of each paragraph
 	# Only if the overall average of sentences per paragraph is smaller than 3.5
-	if overallAverageSentencesParagraph < 3.5
+	if overallAverageSentencesParagraph > 2.5
+		# Select the sentence with the highest score of each paragraph
 		for p, i in paragraphs
 			arr = sentencesByParagraph[i]
 			max_score = 0
