@@ -80,7 +80,7 @@ re = ///^(
 # Default Options to be applied
 defaultOptions =
 	maxAnalyzedSentences: 0
-	shortenFactor: 0.15
+	shortenFactor: 0.20
 
 isNumeric = (obj) ->
   (typeof obj) is "number"
@@ -378,24 +378,25 @@ main = (ch, options, callback) ->
 	overallAverageSentencesParagraph += countSentences text for text in paragraphs
 	overallAverageSentencesParagraph = overallAverageSentencesParagraph / paragraphs.length
 
-	# Only if the overall average of sentences per paragraph is smaller than 3.5
-	if overallAverageSentencesParagraph > 2.5
-		# Select the sentence with the highest score of each paragraph
-		for p, i in paragraphs
-			arr = sentencesByParagraph[i]
-			max_score = 0
-			best_s = ""
-			best_s_index = 0
-			dict_p = getSentencesRank arr
-			dict_p_arr[i] = dict_p
-			dict_p_arr_balance[i] = sentences.length / arr.length
 
-			for s in arr
-				strip_s = formatSentence s
-				if s? and dict_p[strip_s] > max_score and !(arrayContainsObject ignore, s)
-					max_score = dict_p[strip_s]
-					best_s = s
+	# Select the sentence with the highest score of each paragraph
+	for p, i in paragraphs
+		arr = sentencesByParagraph[i]
+		max_score = 0
+		best_s = ""
+		best_s_index = 0
+		dict_p = getSentencesRank arr
+		dict_p_arr[i] = dict_p
+		dict_p_arr_balance[i] = sentences.length / arr.length
 
+		for s in arr
+			strip_s = formatSentence s
+			if s? and dict_p[strip_s] > max_score and !(arrayContainsObject ignore, s)
+				max_score = dict_p[strip_s]
+				best_s = s
+
+		# Only if the overall average of sentences per paragraph is smaller than 3.5
+		if overallAverageSentencesParagraph > 2
 			selSentences[i].push best_s
 			selSentencesWords += countWords best_s
 			ignore.push best_s

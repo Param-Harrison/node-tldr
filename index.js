@@ -14,7 +14,7 @@
 
   defaultOptions = {
     maxAnalyzedSentences: 0,
-    shortenFactor: 0.15
+    shortenFactor: 0.20
   };
 
   isNumeric = function(obj) {
@@ -346,24 +346,24 @@
       overallAverageSentencesParagraph += countSentences(text);
     }
     overallAverageSentencesParagraph = overallAverageSentencesParagraph / paragraphs.length;
-    if (overallAverageSentencesParagraph > 2.5) {
-      for (i = _t = 0, _len11 = paragraphs.length; _t < _len11; i = ++_t) {
-        p = paragraphs[i];
-        arr = sentencesByParagraph[i];
-        max_score = 0;
-        best_s = "";
-        best_s_index = 0;
-        dict_p = getSentencesRank(arr);
-        dict_p_arr[i] = dict_p;
-        dict_p_arr_balance[i] = sentences.length / arr.length;
-        for (_u = 0, _len12 = arr.length; _u < _len12; _u++) {
-          s = arr[_u];
-          strip_s = formatSentence(s);
-          if ((s != null) && dict_p[strip_s] > max_score && !(arrayContainsObject(ignore, s))) {
-            max_score = dict_p[strip_s];
-            best_s = s;
-          }
+    for (i = _t = 0, _len11 = paragraphs.length; _t < _len11; i = ++_t) {
+      p = paragraphs[i];
+      arr = sentencesByParagraph[i];
+      max_score = 0;
+      best_s = "";
+      best_s_index = 0;
+      dict_p = getSentencesRank(arr);
+      dict_p_arr[i] = dict_p;
+      dict_p_arr_balance[i] = sentences.length / arr.length;
+      for (_u = 0, _len12 = arr.length; _u < _len12; _u++) {
+        s = arr[_u];
+        strip_s = formatSentence(s);
+        if ((s != null) && dict_p[strip_s] > max_score && !(arrayContainsObject(ignore, s))) {
+          max_score = dict_p[strip_s];
+          best_s = s;
         }
+      }
+      if (overallAverageSentencesParagraph > 2) {
         selSentences[i].push(best_s);
         selSentencesWords += countWords(best_s);
         ignore.push(best_s);
