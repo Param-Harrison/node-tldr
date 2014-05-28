@@ -152,10 +152,10 @@ calculateWPRatio = (text) ->
 	word_count / ((2 * sent_count) / punc_count) # The number of words relative to the number of punctuation marks.
 
 # Checks if an array contains a given object
-arrayContainsObject = (arr, o) ->
+arrayContainsObject = (arr, input) ->
 	output = false
-	for i in arr
-		if o is i
+	for object in arr
+		if input is object
 			output = true
 	output
 
@@ -273,38 +273,75 @@ main = (ch, options, callback) ->
 
 	# Pick all paragraphs in an HTML document
 	articleBody = $('[itemprop="articleBody"]')
-	type = 0
 	if articleBody.length > 0
 		cand = $(articleBody).children('p').toArray()
 		if cand.length == 0
 			cand = $(articleBody).text().split '<br><br>'
-			type = 1
+			for element in cand
+				# Filters the elements by certain requirements
+				if (element.indexOf '<div') is -1 and (element.indexOf '<img') is -1 and (element.indexOf '<script') is -1 and (element.indexOf '<ul') is -1
+					text = stripBrackets (stripTags element).trim()
+					sent_count = countSentences text
+					wp_ratio = calculateWPRatio text
+					letter_percentage = percentageLetter text
+					# Paragraphs should consist of more than 50% letters, more than one sentence and should reach a score of at least 60.
+					if letter_percentage > 0.5 and sent_count > 0 and wp_ratio > 60
+						paragraphs.push cleanSentence text.trim()
+						totalWords += countWords text
 	else
 		cand = $('p').toArray()
-
-	# Filters the elements by certain requirements
-	if type == 0
-		for element in cand
-			if $(element).find('div').length is 0 and $(element).find('img').length is 0 and $(element).find('script').length is 0 and $(element).find('ul').length is 0
-				text = stripBrackets (stripTags $(element).text()).trim()
-				sent_count = countSentences text
-				wp_ratio = calculateWPRatio text
-				letter_percentage = percentageLetter text
-				# Paragraphs should consist of more than 50% letters, more than one sentence and should reach a score of at least 60.
-				if letter_percentage > 0.5 and sent_count > 0 and wp_ratio > 60
-					paragraphs.push text
-					totalWords += countWords text
-	else if type == 1
-		for element in cand
-			if (element.indexOf '<div') is -1 and (element.indexOf '<img') is -1 and (element.indexOf '<script') is -1 and (element.indexOf '<ul') is -1
-				text = stripBrackets (stripTags element).trim()
-				sent_count = countSentences text
-				wp_ratio = calculateWPRatio text
-				letter_percentage = percentageLetter text
-				# Paragraphs should consist of more than 50% letters, more than one sentence and should reach a score of at least 60.
-				if letter_percentage > 0.5 and sent_count > 0 and wp_ratio > 60
-					paragraphs.push text
-					totalWords += countWords text
+		parents = []
+		parentsScore = []
+		parentsScoreAverage = 0
+		# Get the paragraphs parents
+		for p in cand
+			parents.push $(p).parent()
+		# Get the parents number of containing paragraphs
+		for p in parents
+			score = $(p).children('p').length
+			parentsScoreAverage += score
+			parentsScore.push score
+		# Get the average score
+		parentsScoreAverage = parentsScoreAverage / parentsScore.length
+		# Analyze all paragraphs, which score above average
+		for score, i in parentsScore
+			if score > parentsScoreAverage
+				paragraphsIgnore = []
+				paragraphsParsed = []
+				averageSentences = 0
+				# Analyze all paragraphs
+				for element, i in $(parents[i]).children('p').toArray()
+					# Filters the elements by certain requirements
+					if $(element).find('div').length is 0 and $(element).find('img').length is 0 and $(element).find('script').length is 0 and $(element).find('ul').length is 0
+						text = cleanSentence (stripBrackets (stripTags $(element).text())).trim()
+						# Check if the paragraph was already analyzed before
+						# TODO: This is necessary until a way is found to eliminate duplicate parents
+						unless arrayContainsObject(paragraphsIgnore, text)
+							letter_percentage = percentageLetter text
+							# Filters the paragraphs by whether they are mostly build up of numbers
+							if letter_percentage > 0.5
+								wp_ratio = calculateWPRatio text
+								averageSentences += countSentences text
+								# Save the WP-Ratio
+								paragraphsParsed.push [
+									text,
+									wp_ratio
+								]
+				# Calculate the average number of sentences
+				if averageSentences > 0
+					averageSentences = averageSentences / paragraphsParsed.length
+				# The minimum required WP-Ratio is 20 times the number of average sentences
+				minimumWP = averageSentences * 20
+				for p in paragraphsParsed
+					if p[1] > minimumWP
+						paragraphs.push p[0]
+						# Ignore already analyzed paragraphs
+						paragraphsIgnore.push p[0]
+						# Count the total number of words
+						totalWords += countWords p[0]
+					else
+						# Ignore already analyzed paragraphs
+						paragraphsIgnore.push p[0]
 
 	# Get all sentences by paragraph
 	for paragraph, i in paragraphs
