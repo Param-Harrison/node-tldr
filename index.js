@@ -214,7 +214,7 @@
   };
 
   main = function(ch, options, callback) {
-    var $, arr, best_s, best_s_index, cand, dict, dict_p, dict_p_arr, dict_p_arr_balance, element, failure, highestItem, highestScore, i, ignore, items, letter_percentage, longest_streak, max_score, p, paragraph, paragraphs, s, score, selSentences, selSentencesWords, sent_count, sentences, sentencesByParagraph, sentencesIndex, strip_s, summary, text, title, title_comp, totalWords, words, wp_ratio, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _s, _t;
+    var $, arr, articleBody, best_s, best_s_index, cand, dict, dict_p, dict_p_arr, dict_p_arr_balance, element, failure, highestItem, highestScore, i, ignore, items, letter_percentage, longest_streak, max_score, p, paragraph, paragraphs, s, score, selSentences, selSentencesWords, sent_count, sentences, sentencesByParagraph, sentencesIndex, strip_s, summary, text, title, title_comp, totalWords, type, words, wp_ratio, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len12, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _s, _t, _u;
     $ = ch;
     summary = [];
     title = "";
@@ -232,34 +232,60 @@
     strip_s = "";
     i = 0;
     sentencesByParagraph = [];
-    cand = $('p').toArray();
-    for (_i = 0, _len = cand.length; _i < _len; _i++) {
-      element = cand[_i];
-      if ($(element).find('div').length === 0 && $(element).find('img').length === 0 && $(element).find('script').length === 0 && $(element).find('ul').length === 0) {
-        text = stripBrackets((stripTags($(element).text())).trim());
-        sent_count = countSentences(text);
-        wp_ratio = calculateWPRatio(text);
-        letter_percentage = percentageLetter(text);
-        if (letter_percentage > 0.5 && sent_count > 0 && wp_ratio > 60) {
-          paragraphs.push(text);
-          totalWords += countWords(text);
+    articleBody = $('[itemprop="articleBody"]');
+    type = 0;
+    if (articleBody.length > 0) {
+      cand = $(articleBody).children('p').toArray();
+      if (cand.length === 0) {
+        cand = $(articleBody).text().split('<br><br>');
+        type = 1;
+      }
+    } else {
+      cand = $('p').toArray();
+    }
+    if (type === 0) {
+      for (_i = 0, _len = cand.length; _i < _len; _i++) {
+        element = cand[_i];
+        if ($(element).find('div').length === 0 && $(element).find('img').length === 0 && $(element).find('script').length === 0 && $(element).find('ul').length === 0) {
+          text = stripBrackets((stripTags($(element).text())).trim());
+          sent_count = countSentences(text);
+          wp_ratio = calculateWPRatio(text);
+          letter_percentage = percentageLetter(text);
+          if (letter_percentage > 0.5 && sent_count > 0 && wp_ratio > 60) {
+            paragraphs.push(text);
+            totalWords += countWords(text);
+          }
+        }
+      }
+    } else if (type === 1) {
+      for (_j = 0, _len1 = cand.length; _j < _len1; _j++) {
+        element = cand[_j];
+        if ((element.indexOf('<div')) === -1 && (element.indexOf('<img')) === -1 && (element.indexOf('<script')) === -1 && (element.indexOf('<ul')) === -1) {
+          text = stripBrackets((stripTags(element)).trim());
+          sent_count = countSentences(text);
+          wp_ratio = calculateWPRatio(text);
+          letter_percentage = percentageLetter(text);
+          if (letter_percentage > 0.5 && sent_count > 0 && wp_ratio > 60) {
+            paragraphs.push(text);
+            totalWords += countWords(text);
+          }
         }
       }
     }
-    for (i = _j = 0, _len1 = paragraphs.length; _j < _len1; i = ++_j) {
+    for (i = _k = 0, _len2 = paragraphs.length; _k < _len2; i = ++_k) {
       paragraph = paragraphs[i];
       arr = splitContentToSentences(paragraph);
       sentencesByParagraph.push(arr);
       if (arr.length > 1) {
-        for (_k = 0, _len2 = arr.length; _k < _len2; _k++) {
-          s = arr[_k];
+        for (_l = 0, _len3 = arr.length; _l < _len3; _l++) {
+          s = arr[_l];
           sentences.push(s);
           sentencesIndex.push(i);
         }
       }
     }
-    for (_l = 0, _len3 = paragraphs.length; _l < _len3; _l++) {
-      p = paragraphs[_l];
+    for (_m = 0, _len4 = paragraphs.length; _m < _len4; _m++) {
+      p = paragraphs[_m];
       selSentences.push([]);
       dict_p_arr.push([]);
     }
@@ -267,7 +293,7 @@
       sentences = sentences.slice(0, +(options.maxAnalyzedSentences - 1) + 1 || 9e9);
     }
     dict = getSentencesRank(sentences);
-    for (i = _m = 0, _len4 = paragraphs.length; _m < _len4; i = ++_m) {
+    for (i = _n = 0, _len5 = paragraphs.length; _n < _len5; i = ++_n) {
       p = paragraphs[i];
       arr = sentencesByParagraph[i];
       max_score = 0;
@@ -276,8 +302,8 @@
       dict_p = getSentencesRank(arr);
       dict_p_arr[i] = dict_p;
       dict_p_arr_balance[i] = sentences.length / arr.length;
-      for (_n = 0, _len5 = arr.length; _n < _len5; _n++) {
-        s = arr[_n];
+      for (_o = 0, _len6 = arr.length; _o < _len6; _o++) {
+        s = arr[_o];
         strip_s = formatSentence(s);
         if ((s != null) && dict_p[strip_s] > max_score && !(arrayContainsObject(ignore, s))) {
           max_score = dict_p[strip_s];
@@ -292,7 +318,7 @@
       max_score = 0;
       best_s = "";
       best_s_index = 0;
-      for (i = _o = 0, _len6 = sentences.length; _o < _len6; i = ++_o) {
+      for (i = _p = 0, _len7 = sentences.length; _p < _len7; i = ++_p) {
         s = sentences[i];
         strip_s = formatSentence(s);
         if ((s != null) && dict[strip_s] > max_score && !(arrayContainsObject(ignore, s)) && (dict_p_arr[sentencesIndex[i]][strip_s] * dict_p_arr_balance[sentencesIndex[i]]) < dict[strip_s]) {
@@ -308,28 +334,28 @@
       selSentencesWords += countWords(best_s);
       ignore.push(best_s);
     }
-    for (_p = 0, _len7 = selSentences.length; _p < _len7; _p++) {
-      arr = selSentences[_p];
+    for (_q = 0, _len8 = selSentences.length; _q < _len8; _q++) {
+      arr = selSentences[_q];
       paragraph = arr.join(" ");
       paragraph = paragraph.trim();
       if ((paragraph != null) && paragraph.length > 0) {
         summary.push(paragraph);
       }
     }
-    title = stripBrackets((stripTags($('h1[itemprop="name"]').text())).trim());
+    title = stripBrackets((stripTags($('[itemprop="name"]').text())).trim());
     if (!((title != null) && title.length > 0)) {
       items = [];
-      items = $('h1').toArray();
+      items = $('h1, h2').toArray();
       highestScore = 0;
       highestItem = '';
-      for (_q = 0, _len8 = items.length; _q < _len8; _q++) {
-        element = items[_q];
+      for (_r = 0, _len9 = items.length; _r < _len9; _r++) {
+        element = items[_r];
         if ($(element).find('div').length === 0 && $(element).find('img').length === 0 && $(element).find('script').length === 0 && $(element).find('ul').length === 0) {
           text = stripBrackets((stripTags($(element).text())).trim());
           if ((percentageLetter(text)) > 0.5) {
             score = 0;
-            for (_r = 0, _len9 = selSentences.length; _r < _len9; _r++) {
-              s = selSentences[_r];
+            for (_s = 0, _len10 = selSentences.length; _s < _len10; _s++) {
+              s = selSentences[_s];
               score += intersectSentences(text, s);
             }
             if (score > highestScore) {
@@ -346,13 +372,13 @@
         }
         title_comp = [];
         title_comp = title.split(/-|–|:|\|/);
-        for (_s = 0, _len10 = title_comp.length; _s < _len10; _s++) {
-          title = title_comp[_s];
+        for (_t = 0, _len11 = title_comp.length; _t < _len11; _t++) {
+          title = title_comp[_t];
           title_comp = title.trim();
         }
         longest_streak = 0;
-        for (_t = 0, _len11 = title_comp.length; _t < _len11; _t++) {
-          title = title_comp[_t];
+        for (_u = 0, _len12 = title_comp.length; _u < _len12; _u++) {
+          title = title_comp[_u];
           words = countWords(e);
           if (words > longest_streak) {
             longest_streak = words;

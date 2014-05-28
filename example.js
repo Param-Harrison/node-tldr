@@ -1,6 +1,6 @@
 var summary = require('./index.js');
 
-summary.summarize('http://www.nytimes.com/2014/05/04/opinion/sunday/president-obama-and-the-world.html', function(title, summary, failure) {
+summary.summarize('http://www.golem.de/news/virtual-cockpit-mit-60-bildern-pro-sekunde-in-den-roten-drehzahlbereich-1405-106526.html', function(title, summary, failure) {
 	if (failure) {
 		console.log("An error occured!");
 	}

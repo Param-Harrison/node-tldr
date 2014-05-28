@@ -272,19 +272,39 @@ main = (ch, options, callback) ->
 	sentencesByParagraph = []
 
 	# Pick all paragraphs in an HTML document
-	cand = $('p').toArray()
+	articleBody = $('[itemprop="articleBody"]')
+	type = 0
+	if articleBody.length > 0
+		cand = $(articleBody).children('p').toArray()
+		if cand.length == 0
+			cand = $(articleBody).text().split '<br><br>'
+			type = 1
+	else
+		cand = $('p').toArray()
 
 	# Filters the elements by certain requirements
-	for element in cand
-		if $(element).find('div').length is 0 and $(element).find('img').length is 0 and $(element).find('script').length is 0 and $(element).find('ul').length is 0
-			text = stripBrackets (stripTags $(element).text()).trim()
-			sent_count = countSentences text
-			wp_ratio = calculateWPRatio text
-			letter_percentage = percentageLetter text
-			# Paragraphs should consist of more than 50% letters, more than one sentence and should reach a score of at least 60.
-			if letter_percentage > 0.5 and sent_count > 0 and wp_ratio > 60
-				paragraphs.push text
-				totalWords += countWords text
+	if type == 0
+		for element in cand
+			if $(element).find('div').length is 0 and $(element).find('img').length is 0 and $(element).find('script').length is 0 and $(element).find('ul').length is 0
+				text = stripBrackets (stripTags $(element).text()).trim()
+				sent_count = countSentences text
+				wp_ratio = calculateWPRatio text
+				letter_percentage = percentageLetter text
+				# Paragraphs should consist of more than 50% letters, more than one sentence and should reach a score of at least 60.
+				if letter_percentage > 0.5 and sent_count > 0 and wp_ratio > 60
+					paragraphs.push text
+					totalWords += countWords text
+	else if type == 1
+		for element in cand
+			if (element.indexOf '<div') is -1 and (element.indexOf '<img') is -1 and (element.indexOf '<script') is -1 and (element.indexOf '<ul') is -1
+				text = stripBrackets (stripTags element).trim()
+				sent_count = countSentences text
+				wp_ratio = calculateWPRatio text
+				letter_percentage = percentageLetter text
+				# Paragraphs should consist of more than 50% letters, more than one sentence and should reach a score of at least 60.
+				if letter_percentage > 0.5 and sent_count > 0 and wp_ratio > 60
+					paragraphs.push text
+					totalWords += countWords text
 
 	# Get all sentences by paragraph
 	for paragraph, i in paragraphs
@@ -351,12 +371,12 @@ main = (ch, options, callback) ->
 		if paragraph? and paragraph.length > 0
 			summary.push paragraph
 
-	# Search for the title in a tagged h1-tag
-	title = stripBrackets (stripTags $('h1[itemprop="name"]').text()).trim()
+	# Search for the title by itemprop=name
+	title = stripBrackets (stripTags $('[itemprop="name"]').text()).trim()
 	unless title? and title.length > 0
 		# If there is no tagged h1-tag collect all h1- (and h2-) tags
 		items = []
-		items = $('h1').toArray()
+		items = $('h1, h2').toArray()
 		highestScore = 0
 		highestItem = ''
 
