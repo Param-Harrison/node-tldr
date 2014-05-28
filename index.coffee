@@ -374,6 +374,10 @@ main = (ch, options, callback) ->
 	# Search for the title by itemprop=name
 	title = stripBrackets (stripTags $('[itemprop="name"]').text()).trim()
 	unless title? and title.length > 0
+		title = stripBrackets (stripTags $('[itemprop="headline"]').text()).trim()
+	unless title? and title.length > 0
+		title = stripBrackets (stripTags $('[itemprop="title"]').text()).trim()
+	unless title? and title.length > 0
 		# If there is no tagged h1-tag collect all h1- (and h2-) tags
 		items = []
 		items = $('h1, h2').toArray()

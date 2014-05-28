@@ -344,6 +344,12 @@
     }
     title = stripBrackets((stripTags($('[itemprop="name"]').text())).trim());
     if (!((title != null) && title.length > 0)) {
+      title = stripBrackets((stripTags($('[itemprop="headline"]').text())).trim());
+    }
+    if (!((title != null) && title.length > 0)) {
+      title = stripBrackets((stripTags($('[itemprop="title"]').text())).trim());
+    }
+    if (!((title != null) && title.length > 0)) {
       items = [];
       items = $('h1, h2').toArray();
       highestScore = 0;
