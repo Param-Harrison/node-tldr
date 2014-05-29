@@ -405,8 +405,9 @@ main = (ch, options, callback) ->
 		title = stripBrackets (stripTags $('[itemprop="title"]').text()).trim()
 	unless title? and title.length > 0
 		# If there is no tagged h1-tag collect all h1- (and h2-) tags
-		items = []
-		items = $('h1, h2').toArray()
+		items = $('h1').toArray()
+		if items.length is 0
+			items = $('h2').toArray()
 		highestScore = 0
 		highestItem = ''
 

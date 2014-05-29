@@ -373,8 +373,10 @@
       title = stripBrackets((stripTags($('[itemprop="title"]').text())).trim());
     }
     if (!((title != null) && title.length > 0)) {
-      items = [];
-      items = $('h1, h2').toArray();
+      items = $('h1').toArray();
+      if (items.length === 0) {
+        items = $('h2').toArray();
+      }
       highestScore = 0;
       highestItem = '';
       for (_u = 0, _len12 = items.length; _u < _len12; _u++) {
