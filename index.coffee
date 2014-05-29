@@ -173,6 +173,9 @@ splitContentToSentences = (content) ->
 	# This is a RegEx for abbreviations
 	p3 = new RegExp '((Mr|Ms)(\\.))', ["i"]
 
+	# This is a RegEx for dynamic abbreviation recognition
+	p4 = new RegExp '(([A-Z]\\.)([A-Z]\\.)+)', ["i"]
+
 	i = 1
 	t = p.exec(content)
 
@@ -203,6 +206,16 @@ splitContentToSentences = (content) ->
 		]
 		content = content.replace t[0], ('%s' + i)
 		t = p3.exec(content)
+		i++
+
+	t = p4.exec(content)
+	while t?
+		replace.push [
+			'%s' + i
+			t[0]
+		]
+		content = content.replace t[0], ('%s' + i)
+		t = p4.exec(content)
 		i++
 
 	arr = []

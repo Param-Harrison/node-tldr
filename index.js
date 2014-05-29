@@ -126,11 +126,12 @@
   };
 
   splitContentToSentences = function(content) {
-    var arr, i, p, p2, p3, r, replace, s, t, temp, _i, _j, _len, _len1;
+    var arr, i, p, p2, p3, p4, r, replace, s, t, temp, _i, _j, _len, _len1;
     replace = [];
     p = new RegExp('((?:(?:[0-2]?\\d{1})|(?:[3][01]{1})))(?![\\d])(\\.)(\\s+)((?:[a-z][a-z]+))(\\s+)((?:(?:[1]{1}\\d{1}\\d{1}\\d{1})|(?:[2]{1}\\d{3})))(?![\\d])', ["i"]);
     p2 = new RegExp('((?:(?:[0-2]?\\d{1})|(?:[3][01]{1})))(?![\\d])(\\.)(\\s+)((?:Jan(?:uary)?|Feb(?:ruary)?|Feb(?:ruar)?|Mar(?:ch)?|Mär(?:z)?|Apr(?:il)?|May|Mai|Jun(?:e)?|Jun(?:i)?|Jul(?:y)?|Jul(?:i)?|Aug(?:ust)?|Sep(?:tember)?|Sept|Oct(?:ober)?|Okt(?:ober)?|Nov(?:ember)?|Dez(?:ember)?|Dec(?:ember)?))', ["i"]);
     p3 = new RegExp('((Mr|Ms)(\\.))', ["i"]);
+    p4 = new RegExp('(([A-Z]\\.)([A-Z]\\.)+)', ["i"]);
     i = 1;
     t = p.exec(content);
     while (t != null) {
@@ -151,6 +152,13 @@
       replace.push(['%s' + i, t[0]]);
       content = content.replace(t[0], '%s' + i);
       t = p3.exec(content);
+      i++;
+    }
+    t = p4.exec(content);
+    while (t != null) {
+      replace.push(['%s' + i, t[0]]);
+      content = content.replace(t[0], '%s' + i);
+      t = p4.exec(content);
       i++;
     }
     arr = [];
