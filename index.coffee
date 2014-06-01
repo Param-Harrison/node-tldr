@@ -415,13 +415,20 @@ main = (ch, options, callback) ->
 			summary.push paragraph
 
 	# Search for the title by itemprop=name / =headline / =title
-	title = stripBrackets (stripTags $('h1, h2 [itemprop="name"]').text()).trim()
+	title = $('meta[name="og:title"]').attr 'content'
 	unless title? and title.length > 0
-		title = stripBrackets (stripTags $('h1, h2 [itemprop="headline"]').text()).trim()
+		title = stripBrackets (stripTags $('h1[itemprop="name"]').text()).trim()
 	unless title? and title.length > 0
-		title = stripBrackets (stripTags $('h1, h2 [itemprop="title"]').text()).trim()
+		title = stripBrackets (stripTags $('h1[itemprop="headline"]').text()).trim()
 	unless title? and title.length > 0
-		title = $('meta[name="og:title"]').attr 'content'
+		title = stripBrackets (stripTags $('h1[itemprop="title"]').text()).trim()
+	unless title? and title.length > 0
+		title = stripBrackets (stripTags $('h2[itemprop="name"]').text()).trim()
+	unless title? and title.length > 0
+		title = stripBrackets (stripTags $('h2[itemprop="headline"]').text()).trim()
+	unless title? and title.length > 0
+		title = stripBrackets (stripTags $('h2[itemprop="title"]').text()).trim()
+
 	if title? and title.length > 0
 		# Split the title by common splitting characters
 		title_comp = title.split(/-|–|:+|\|/)
