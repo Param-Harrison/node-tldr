@@ -90,7 +90,8 @@ cleanSentence = (s) ->
 	s = s.replace /(\“|\”)/g, '"'
 	s = s.replace /(\»|\«)/g, '"'
 	s = s.replace '…', '...'
-	s.replace /\s+/g, ' '
+	s = s.replace /\s+/g, ' '
+	s
 
 # To support unicode characters.
 formatSentence = (sentence) ->
@@ -305,7 +306,7 @@ main = (ch, options, callback) ->
 				letter_percentage = percentageLetter text
 				# Paragraphs should consist of more than 50% letters, more than one sentence and should reach a score of at least 60.
 				if letter_percentage > 0.5 and sent_count > 0 and wp_ratio > 60
-					paragraphs.push cleanSentence text.trim()
+					paragraphs.push cleanSentence (stripBrackets text.trim())
 					totalWords += countWords text
 	else
 		cand = $('p').toArray()
@@ -421,7 +422,20 @@ main = (ch, options, callback) ->
 		title = stripBrackets (stripTags $('h1, h2 [itemprop="title"]').text()).trim()
 	unless title? and title.length > 0
 		title = $('meta[name="og:title"]').attr 'content'
-	unless title? and title.length > 0
+	if title? and title.length > 0
+		# Split the title by common splitting characters
+		title_comp = title.split(/-|–|:|\|/)
+		if title_comp.length > 1
+			title_comp = title.trim() for title in title_comp
+
+			# Search the longest component of the title-tag and make it the title
+			longest_streak = 0
+			for title in title_comp
+				words = countWords e
+				if words > longest_streak
+					longest_streak = words
+					title = e
+	else
 		# If there is no tagged h1-tag collect all h1- (and h2-) tags
 		items = $('h1').toArray()
 		if items.length is 0
@@ -449,7 +463,6 @@ main = (ch, options, callback) ->
 				title = $('title').text()
 
 			# Split the title by common splitting characters
-			title_comp = []
 			title_comp = title.split(/-|–|:|\|/)
 			title_comp = title.trim() for title in title_comp
 
