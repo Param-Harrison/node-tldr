@@ -32,7 +32,7 @@ summary.summarize(url, function(title, summary, failure) {
 
 ## API
 
-### summary.summarize(object, [options], callback(title, summary, failure))
+### summary.summarize(object, [options], callback(result, failure))
 
 For *object* you can either pass a string containing an URL, or an already fetched cheerio object.
 
