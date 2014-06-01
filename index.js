@@ -391,16 +391,16 @@
       title_comp = title.split(/-|–|:|\|/);
       if (title_comp.length > 1) {
         for (_u = 0, _len12 = title_comp.length; _u < _len12; _u++) {
-          title = title_comp[_u];
-          title_comp = title.trim();
+          s = title_comp[_u];
+          title_comp = s.trim();
         }
         longest_streak = 0;
         for (_v = 0, _len13 = title_comp.length; _v < _len13; _v++) {
-          title = title_comp[_v];
-          words = countWords(e);
+          s = title_comp[_v];
+          words = countWords(s);
           if (words > longest_streak) {
             longest_streak = words;
-            title = e;
+            title = s;
           }
         }
       }
@@ -435,16 +435,16 @@
         }
         title_comp = title.split(/-|–|:|\|/);
         for (_y = 0, _len16 = title_comp.length; _y < _len16; _y++) {
-          title = title_comp[_y];
-          title_comp = title.trim();
+          s = title_comp[_y];
+          title_comp = s.trim();
         }
         longest_streak = 0;
         for (_z = 0, _len17 = title_comp.length; _z < _len17; _z++) {
-          title = title_comp[_z];
-          words = countWords(e);
+          s = title_comp[_z];
+          words = countWords(s);
           if (words > longest_streak) {
             longest_streak = words;
-            title = e;
+            title = s;
           }
         }
       } else {
