@@ -225,7 +225,7 @@
   };
 
   main = function(ch, options, callback) {
-    var $, arr, articleBody, averageLetterPercentage, averageSentences, best_s, best_s_index, cand, dict, element, error, failure, highestItem, highestScore, i, ignore, items, lengthTitleComp, letter_percentage, longest_streak, max_score, minimumWP, p, paragraph, paragraphs, paragraphsIgnore, paragraphsParsed, parents, parentsScore, parentsScoreAverage, result, s, score, selSentences, selSentencesWords, sent_count, sentences, sentencesByParagraph, sentencesIndex, strip_s, summary, temp, text, title, title_comp, totalWords, wp_ratio, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len12, _len13, _len14, _len15, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _ref, _s, _t, _u, _v, _w, _x;
+    var $, arr, articleBody, averageLetterPercentage, averageSentences, best_s, best_s_index, cand, dict, element, error, failure, highestItem, highestScore, i, ignore, items, lengthTitleComp, letter_percentage, longest_streak, max_score, minimumWP, p, paragraph, paragraphs, paragraphsIgnore, paragraphsParsed, parents, parentsId, parentsScore, parentsScoreAverage, result, s, score, selSentences, selSentencesWords, sent_count, sentences, sentencesByParagraph, sentencesIndex, strip_s, summary, temp, text, title, title_comp, totalWords, wp_ratio, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len12, _len13, _len14, _len15, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _ref, _s, _t, _u, _v, _w, _x;
     $ = ch;
     summary = [];
     title = "";
@@ -272,9 +272,13 @@
       parents = [];
       parentsScore = [];
       parentsScoreAverage = 0;
+      parentsId = 1;
       for (_k = 0, _len2 = cand.length; _k < _len2; _k++) {
         p = cand[_k];
-        parents.push($(p).parent());
+        if (($(p).parent().attr('tldrAnalyze')) !== 'yes') {
+          $(p).parent().attr('tldrAnalyze', 'yes');
+          parents.push($(p).parent());
+        }
       }
       for (_l = 0, _len3 = parents.length; _l < _len3; _l++) {
         p = parents[_l];

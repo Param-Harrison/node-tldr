@@ -313,8 +313,13 @@ main = (ch, options, callback) ->
 		parentsScore = []
 		parentsScoreAverage = 0
 		# Get the paragraphs parents
+		parentsId = 1
 		for p in cand
-			parents.push $(p).parent()
+			# Check if the parent is marked
+			if ($(p).parent().attr 'tldrAnalyze') isnt 'yes'
+				# Mark the parent so it's not getting used again
+				$(p).parent().attr 'tldrAnalyze', 'yes'
+				parents.push $(p).parent()
 		# Get the parents number of containing paragraphs
 		for p in parents
 			score = $(p).children('p').length
@@ -335,7 +340,6 @@ main = (ch, options, callback) ->
 					if $(element).find('div').length is 0 and $(element).find('img').length is 0 and $(element).find('script').length is 0 and $(element).find('ul').length is 0
 						text = cleanSentence (stripBrackets (stripTags $(element).text())).trim()
 						# Check if the paragraph was already analyzed before
-						# TODO: This is necessary until a way is found to eliminate duplicate parents
 						unless arrayContainsObject(paragraphsIgnore, text)
 							letter_percentage = percentageLetter text
 							# Filters the paragraphs by whether they are mostly build up of letters
