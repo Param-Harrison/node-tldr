@@ -430,14 +430,14 @@ main = (ch, options, callback) ->
 
 	if title? and title.length > 0
 		# Split the title by common splitting characters
-		title_comp = title.split(/(-|–|:(:)?|\|)/)
+		title_comp = title.split(/-|–|:(:)?|\|/)
 		if title_comp.length > 1
 			# Search the longest component of the title-tag and make it the title
 			longest_streak = 0
 			for s in title_comp
-				words = countWords s
-				if words > longest_streak
-					longest_streak = words
+				lengthTitleComp = countWords s
+				if s? and lengthS > longest_streak
+					longest_streak = lengthTitleComp
 					title = s.trim()
 	else
 		# If there is no tagged h1-tag collect all h1- (and h2-) tags
@@ -467,14 +467,14 @@ main = (ch, options, callback) ->
 				title = $('title').text()
 
 			# Split the title by common splitting characters
-			title_comp = title.split(/(-|–|:(:)?|\|)/)
+			title_comp = title.split(/-|–|:(:)?|\|/)
 
 			# Search the longest component of the title-tag and make it the title
 			longest_streak = 0
 			for s in title_comp
-				words = countWords s
-				if words > longest_streak
-					longest_streak = words
+				lengthTitleComp = countWords s
+				if s? and lengthTitleComp > longest_streak
+					longest_streak = lengthTitleComp
 					title = s.trim()
 		else
 			title = highestItem
