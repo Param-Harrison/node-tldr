@@ -436,7 +436,7 @@ main = (ch, options, callback) ->
 			longest_streak = 0
 			for s in title_comp
 				lengthTitleComp = countWords s
-				if s? and lengthS > longest_streak
+				if s? and lengthTitleComp > longest_streak
 					longest_streak = lengthTitleComp
 					title = s.trim()
 	else

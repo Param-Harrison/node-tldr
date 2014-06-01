@@ -402,7 +402,7 @@
         for (_u = 0, _len12 = title_comp.length; _u < _len12; _u++) {
           s = title_comp[_u];
           lengthTitleComp = countWords(s);
-          if ((s != null) && lengthS > longest_streak) {
+          if ((s != null) && lengthTitleComp > longest_streak) {
             longest_streak = lengthTitleComp;
             title = s.trim();
           }
