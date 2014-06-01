@@ -430,7 +430,7 @@ main = (ch, options, callback) ->
 
 	if title? and title.length > 0
 		# Split the title by common splitting characters
-		title_comp = title.split(/-|–|:(:)?|\|/)
+		title_comp = title.split(/-|–|:|\|/)
 		if title_comp.length > 1
 			# Search the longest component of the title-tag and make it the title
 			longest_streak = 0
@@ -467,7 +467,7 @@ main = (ch, options, callback) ->
 				title = $('title').text()
 
 			# Split the title by common splitting characters
-			title_comp = title.split(/-|–|:(:)?|\|/)
+			title_comp = title.split(/-|–|:|\|/)
 
 			# Search the longest component of the title-tag and make it the title
 			longest_streak = 0
