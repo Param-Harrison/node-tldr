@@ -226,7 +226,7 @@
   };
 
   main = function(ch, options, callback) {
-    var $, arr, articleBody, averageLetterPercentage, averageSentences, best_s, best_s_index, cand, dict, element, failure, highestItem, highestScore, i, ignore, items, letter_percentage, longest_streak, max_score, minimumWP, p, paragraph, paragraphs, paragraphsIgnore, paragraphsParsed, parents, parentsScore, parentsScoreAverage, s, score, selSentences, selSentencesWords, sent_count, sentences, sentencesByParagraph, sentencesIndex, strip_s, summary, temp, text, title, title_comp, totalWords, words, wp_ratio, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len12, _len13, _len14, _len15, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _ref, _s, _t, _u, _v, _w, _x;
+    var $, arr, articleBody, averageLetterPercentage, averageSentences, best_s, best_s_index, cand, dict, element, error, failure, highestItem, highestScore, i, ignore, items, letter_percentage, longest_streak, max_score, minimumWP, p, paragraph, paragraphs, paragraphsIgnore, paragraphsParsed, parents, parentsScore, parentsScoreAverage, result, s, score, selSentences, selSentencesWords, sent_count, sentences, sentencesByParagraph, sentencesIndex, strip_s, summary, temp, text, title, title_comp, totalWords, words, wp_ratio, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len12, _len13, _len14, _len15, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _ref, _s, _t, _u, _v, _w, _x;
     $ = ch;
     summary = [];
     title = "";
@@ -453,10 +453,18 @@
       }
     }
     if (title === "404 Not Found") {
+      title = '';
+      error = 'Page not found!';
       failure = true;
     }
-    title = title;
-    return callback(cleanSentence(title), summary, failure);
+    result = {
+      'title': cleanSentence(title),
+      'error': '',
+      'summary': summary,
+      'words': selSentencesWords,
+      'compressFactor': Math.round(selSentencesWords / totalWords)
+    };
+    return callback(result, failure);
   };
 
   exports.summarize = function(input, options, callback) {
@@ -471,10 +479,14 @@
       options.shortenFactor = defaultOptions.shortenFactor;
     }
     if (!isNumeric(options.maxAnalyzedSentences)) {
-      callback('Pass a valid number for the maximum number of sentences to be analyzed!', '', true);
+      callback({
+        error: 'Pass a valid number for the maximum number of sentences to be analyzed!'
+      }, true);
     }
     if ((!isNumeric(options.shortenFactor)) || options.shortenFactor <= 0 || options.shortenFactor > 0.8) {
-      callback('Pass a valid factor between 0 and 0.8 the text will be shortened to!', '', true);
+      callback({
+        error: 'Pass a valid factor between 0 and 0.8 the text will be shortened to!'
+      }, true);
     }
     if (typeof input === 'string') {
       return request(input, function(error, response, body) {
@@ -485,15 +497,19 @@
             return callback(title, summary, failure);
           });
         } else {
-          return callback('Failure while parsing', [], true);
+          return callback({
+            error: 'Failure while parsing'
+          }, true);
         }
       });
     } else if (typeof input === 'object') {
-      return main(input, options, function(title, summary, failure) {
-        return callback(title, summary, failure);
+      return main(input, options, function(result, failure) {
+        return callback(result, failure);
       });
     } else {
-      return callback('False input data', [], true);
+      return callback({
+        error: 'False input data'
+      }, true);
     }
   };
 

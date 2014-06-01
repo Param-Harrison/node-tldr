@@ -482,11 +482,19 @@ main = (ch, options, callback) ->
 
 	# Emit an error if the page was not found
 	if title is "404 Not Found"
+		title = ''
+		error = 'Page not found!'
 		failure = true
 
-	title = title
+	# Callback Object
+	result =
+		'title': cleanSentence title
+		'error': ''
+		'summary': summary
+		'words': selSentencesWords
+		'compressFactor': Math.round selSentencesWords / totalWords
 
-	callback (cleanSentence title), summary, failure
+	callback result, failure
 
 exports.summarize = (input, options, callback) ->
 	if arguments.length is 2 # No options-object was passed
@@ -497,10 +505,10 @@ exports.summarize = (input, options, callback) ->
 	options.shortenFactor = defaultOptions.shortenFactor unless options.shortenFactor?
 
 	unless isNumeric options.maxAnalyzedSentences
-		callback 'Pass a valid number for the maximum number of sentences to be analyzed!', '', true
+		callback { error: 'Pass a valid number for the maximum number of sentences to be analyzed!' }, true
 
 	if (!isNumeric options.shortenFactor) or options.shortenFactor <= 0 or options.shortenFactor > 0.8
-		callback 'Pass a valid factor between 0 and 0.8 the text will be shortened to!', '', true
+		callback { error: 'Pass a valid factor between 0 and 0.8 the text will be shortened to!' }, true
 
 	if typeof input is 'string' # The input is a URL
 		request input, (error, response, body) ->
@@ -509,9 +517,9 @@ exports.summarize = (input, options, callback) ->
 				main ch, options, (title, summary, failure) ->
 					callback title, summary, failure
 			else
-				callback 'Failure while parsing', [], true
+				callback { error: 'Failure while parsing' }, true
 	else if typeof input is 'object' # The input could be a cheerio object
-		main input, options, (title, summary, failure) ->
-			callback title, summary, failure
+		main input, options, (result, failure) ->
+			callback result, failure
 	else
-		callback 'False input data', [], true
+		callback { error: 'False input data' }, true

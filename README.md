@@ -20,11 +20,13 @@ npm install node-sumuparticles
 var summary = require('node-tldr');
 summary.summarize(url, function(title, summary, failure) {
 	if (failure) {
-		console.log("There was an error.");
+		console.log("An error occured! " + result.error);
 	}
 
-  console.log(title);
-	console.log(summary.join("\n"));
+	console.log(result.title);
+	console.log(result.words);
+	console.log(result.compressFactor);
+	console.log(result.summary.join("\n"));
 });
 ```
 
