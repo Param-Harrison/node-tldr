@@ -374,12 +374,15 @@
         summary.push(paragraph);
       }
     }
-    title = stripBrackets((stripTags($('[itemprop="name"]').text())).trim());
+    title = stripBrackets((stripTags($('h1, h2 [itemprop="name"]').text())).trim());
     if (!((title != null) && title.length > 0)) {
-      title = stripBrackets((stripTags($('[itemprop="headline"]').text())).trim());
+      title = stripBrackets((stripTags($('h1, h2 [itemprop="headline"]').text())).trim());
     }
     if (!((title != null) && title.length > 0)) {
-      title = stripBrackets((stripTags($('[itemprop="title"]').text())).trim());
+      title = stripBrackets((stripTags($('h1, h2 [itemprop="title"]').text())).trim());
+    }
+    if (!((title != null) && title.length > 0)) {
+      title = $('meta[name="og:title"]').attr('content');
     }
     if (!((title != null) && title.length > 0)) {
       items = $('h1').toArray();

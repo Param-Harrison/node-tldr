@@ -411,12 +411,14 @@ main = (ch, options, callback) ->
 		if paragraph? and paragraph.length > 0
 			summary.push paragraph
 
-	# Search for the title by itemprop=name
-	title = stripBrackets (stripTags $('[itemprop="name"]').text()).trim()
+	# Search for the title by itemprop=name / =headline / =title
+	title = stripBrackets (stripTags $('h1, h2 [itemprop="name"]').text()).trim()
 	unless title? and title.length > 0
-		title = stripBrackets (stripTags $('[itemprop="headline"]').text()).trim()
+		title = stripBrackets (stripTags $('h1, h2 [itemprop="headline"]').text()).trim()
 	unless title? and title.length > 0
-		title = stripBrackets (stripTags $('[itemprop="title"]').text()).trim()
+		title = stripBrackets (stripTags $('h1, h2 [itemprop="title"]').text()).trim()
+	unless title? and title.length > 0
+		title = $('meta[name="og:title"]').attr 'content'
 	unless title? and title.length > 0
 		# If there is no tagged h1-tag collect all h1- (and h2-) tags
 		items = $('h1').toArray()
