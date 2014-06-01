@@ -23,8 +23,7 @@
 
   cleanSentence = function(s) {
     s = s.replace(/\n/g, ' ');
-    s = s.replace(/(\“|\”)/g, '"');
-    s = s.replace(/(\»|\«)/g, '"');
+    s = s.replace(/(\»|\«|\„|\“|\”)/g, '"');
     s = s.replace('…', '...');
     s = s.replace(/\s+/g, ' ');
     return s;

@@ -87,8 +87,7 @@ isNumeric = (obj) ->
 
 cleanSentence = (s) ->
 	s = s.replace /\n/g, ' '
-	s = s.replace /(\“|\”)/g, '"'
-	s = s.replace /(\»|\«)/g, '"'
+	s = s.replace /(\»|\«|\„|\“|\”)/g, '"'
 	s = s.replace '…', '...'
 	s = s.replace /\s+/g, ' '
 	s
