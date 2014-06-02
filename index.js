@@ -382,6 +382,9 @@
     }
     title = $('meta[name="og:title"]').attr('content');
     if (!((title != null) && title.length > 0)) {
+      title = $('meta[property="og:title"]').attr('content');
+    }
+    if (!((title != null) && title.length > 0)) {
       title = $('meta[name="twitter:title"]').attr('content');
     }
     if (!((title != null) && title.length > 0)) {
@@ -419,8 +422,6 @@
         if (replace.length > 0) {
           title_comp = title.split(/[-–:\|]\s/);
         }
-        console.log(replace);
-        console.log(title);
         longest_streak = 0;
         for (_u = 0, _len12 = title_comp.length; _u < _len12; _u++) {
           s = title_comp[_u];

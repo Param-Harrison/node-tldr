@@ -420,6 +420,8 @@ main = (ch, options, callback) ->
 	# Search for the title by itemprop=name / =headline / =title
 	title = $('meta[name="og:title"]').attr 'content'
 	unless title? and title.length > 0
+		title = $('meta[property="og:title"]').attr 'content'
+	unless title? and title.length > 0
 		title = $('meta[name="twitter:title"]').attr 'content'
 	unless title? and title.length > 0
 		title = stripBrackets (stripTags $('h1[itemprop="name"]').text()).trim()
