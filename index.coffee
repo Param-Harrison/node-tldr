@@ -440,7 +440,7 @@ main = (ch, options, callback) ->
 		title_comp = title.split(/[-–:\|]\s/)
 		if title_comp.length > 1
 			# Saving the content in quotation marks so it won't get split
-			p = new RegExp '\s((\".+\")|(\'.+\'))\s', ["i"]
+			p = /\s((\".+\")|(\'.+\'))\s/i
 			replace = []
 			i = 1
 			t = p.exec(title)
@@ -522,7 +522,7 @@ main = (ch, options, callback) ->
 		'error': ''
 		'summary': summary
 		'words': selSentencesWords
-		'compressFactor': Math.round selSentencesWords / totalWords
+		'compressFactor': (Math.round 100 * selSentencesWords / totalWords) / 100
 
 	callback result, failure
 

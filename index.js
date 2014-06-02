@@ -406,7 +406,7 @@
       title = cleanSentence(title);
       title_comp = title.split(/[-–:\|]\s/);
       if (title_comp.length > 1) {
-        p = new RegExp('\s((\".+\")|(\'.+\'))\s', ["i"]);
+        p = /\s((\".+\")|(\'.+\'))\s/i;
         replace = [];
         i = 1;
         t = p.exec(title);
@@ -419,6 +419,8 @@
         if (replace.length > 0) {
           title_comp = title.split(/[-–:\|]\s/);
         }
+        console.log(replace);
+        console.log(title);
         longest_streak = 0;
         for (_u = 0, _len12 = title_comp.length; _u < _len12; _u++) {
           s = title_comp[_u];
@@ -493,7 +495,7 @@
       'error': '',
       'summary': summary,
       'words': selSentencesWords,
-      'compressFactor': Math.round(selSentencesWords / totalWords)
+      'compressFactor': (Math.round(100 * selSentencesWords / totalWords)) / 100
     };
     return callback(result, failure);
   };

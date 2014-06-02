@@ -1,6 +1,6 @@
 var summary = require('./index.js');
 
-summary.summarize('http://thenextweb.com/apps/2014/05/28/skillz-brings-real-money-gaming-platform-ios', function(result, failure) {
+summary.summarize('http://www.dailydot.com/geek/wolfenstein-the-new-order-nazi-brutality/', function(result, failure) {
 	if (failure) {
 		console.log("An error occured! " + result.error);
 	}
