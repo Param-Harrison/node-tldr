@@ -403,7 +403,7 @@
       title = stripBrackets((stripTags($('h2[itemprop="title"]').text())).trim());
     }
     if ((title != null) && title.length > 0) {
-      title_comp = title.split(/-|–|:|\|/);
+      title_comp = title.split(/[-–:\|]\s/);
       if (title_comp.length > 1) {
         longest_streak = 0;
         for (_u = 0, _len12 = title_comp.length; _u < _len12; _u++) {
@@ -444,7 +444,7 @@
         if (!((title != null) && title.length > 0)) {
           title = $('title').text();
         }
-        title_comp = title.split(/-|–|:|\|/);
+        title_comp = title.split(/[-–:\|]\s/);
         longest_streak = 0;
         for (_x = 0, _len15 = title_comp.length; _x < _len15; _x++) {
           s = title_comp[_x];
