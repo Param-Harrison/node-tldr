@@ -443,14 +443,14 @@ main = (ch, options, callback) ->
 			p = new RegExp '\s((\".+\")|(\'.+\'))\s', ["i"]
 			replace = []
 			i = 1
-			t = p.exec(content)
+			t = p.exec(title)
 			while t?
 				replace.push [
 					'%s' + i
 					t[0]
 				]
 				title = title.replace t[0], ('%s' + i)
-				t = p.exec(content)
+				t = p.exec(title)
 				i++
 
 			if replace.length > 0
