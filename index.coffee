@@ -435,16 +435,37 @@ main = (ch, options, callback) ->
 		title = stripBrackets (stripTags $('h2[itemprop="title"]').text()).trim()
 
 	if title? and title.length > 0
+
 		# Split the title by common splitting characters
 		title_comp = title.split(/[-–:\|]\s/)
 		if title_comp.length > 1
+			# Saving the content in quotation marks so it won't get split
+			p = new RegExp '\s((\".+\")|(\'.+\'))\s', ["i"]
+			replace = []
+			i = 1
+			t = p.exec(content)
+			while t?
+				replace.push [
+					'%s' + i
+					t[0]
+				]
+				content = content.replace t[0], ('%s' + i)
+				t = p.exec(content)
+				i++
+
 			# Search the longest component of the title-tag and make it the title
 			longest_streak = 0
 			for s in title_comp
 				lengthTitleComp = countWords s
-				if s? and lengthTitleComp > longest_streak
-					longest_streak = lengthTitleComp
-					title = s.trim()
+				if s?
+					if s.indexOf '%s' isnt -1
+						lengthTitleComp += 20
+					if lengthTitleComp > longest_streak
+						longest_streak = lengthTitleComp
+						title = s.trim()
+
+			# Replace the placeholders back with the old content
+			s = s.replace r[0], r[1] for r in replace
 	else
 		# If there is no tagged h1-tag collect all h1- (and h2-) tags
 		items = $('h1').toArray()

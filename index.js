@@ -225,7 +225,7 @@
   };
 
   main = function(ch, options, callback) {
-    var $, arr, articleBody, averageLetterPercentage, averageSentences, best_s, best_s_index, cand, dict, element, error, failure, highestItem, highestScore, i, ignore, items, lengthTitleComp, letter_percentage, longest_streak, max_score, minimumWP, p, paragraph, paragraphs, paragraphsIgnore, paragraphsParsed, parents, parentsId, parentsScore, parentsScoreAverage, result, s, score, selSentences, selSentencesWords, sent_count, sentences, sentencesByParagraph, sentencesIndex, strip_s, summary, temp, text, title, title_comp, totalWords, wp_ratio, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len12, _len13, _len14, _len15, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _ref, _s, _t, _u, _v, _w, _x;
+    var $, arr, articleBody, averageLetterPercentage, averageSentences, best_s, best_s_index, cand, content, dict, element, error, failure, highestItem, highestScore, i, ignore, items, lengthTitleComp, letter_percentage, longest_streak, max_score, minimumWP, p, paragraph, paragraphs, paragraphsIgnore, paragraphsParsed, parents, parentsId, parentsScore, parentsScoreAverage, r, replace, result, s, score, selSentences, selSentencesWords, sent_count, sentences, sentencesByParagraph, sentencesIndex, strip_s, summary, t, temp, text, title, title_comp, totalWords, wp_ratio, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len12, _len13, _len14, _len15, _len16, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _ref, _s, _t, _u, _v, _w, _x, _y;
     $ = ch;
     summary = [];
     title = "";
@@ -405,14 +405,33 @@
     if ((title != null) && title.length > 0) {
       title_comp = title.split(/[-–:\|]\s/);
       if (title_comp.length > 1) {
+        p = new RegExp('\s((\".+\")|(\'.+\'))\s', ["i"]);
+        replace = [];
+        i = 1;
+        t = p.exec(content);
+        while (t != null) {
+          replace.push(['%s' + i, t[0]]);
+          content = content.replace(t[0], '%s' + i);
+          t = p.exec(content);
+          i++;
+        }
         longest_streak = 0;
         for (_u = 0, _len12 = title_comp.length; _u < _len12; _u++) {
           s = title_comp[_u];
           lengthTitleComp = countWords(s);
-          if ((s != null) && lengthTitleComp > longest_streak) {
-            longest_streak = lengthTitleComp;
-            title = s.trim();
+          if (s != null) {
+            if (s.indexOf('%s' !== -1)) {
+              lengthTitleComp += 20;
+            }
+            if (lengthTitleComp > longest_streak) {
+              longest_streak = lengthTitleComp;
+              title = s.trim();
+            }
           }
+        }
+        for (_v = 0, _len13 = replace.length; _v < _len13; _v++) {
+          r = replace[_v];
+          s = s.replace(r[0], r[1]);
         }
       }
     } else {
@@ -422,14 +441,14 @@
       }
       highestScore = 0;
       highestItem = '';
-      for (_v = 0, _len13 = items.length; _v < _len13; _v++) {
-        element = items[_v];
+      for (_w = 0, _len14 = items.length; _w < _len14; _w++) {
+        element = items[_w];
         if ($(element).find('div').length === 0 && $(element).find('img').length === 0 && $(element).find('script').length === 0 && $(element).find('ul').length === 0) {
           text = stripBrackets((stripTags($(element).text())).trim());
           if ((percentageLetter(text)) > 0.5) {
             score = 0;
-            for (_w = 0, _len14 = selSentences.length; _w < _len14; _w++) {
-              s = selSentences[_w];
+            for (_x = 0, _len15 = selSentences.length; _x < _len15; _x++) {
+              s = selSentences[_x];
               score += intersectSentences(text, s);
             }
             if (score > highestScore) {
@@ -446,8 +465,8 @@
         }
         title_comp = title.split(/[-–:\|]\s/);
         longest_streak = 0;
-        for (_x = 0, _len15 = title_comp.length; _x < _len15; _x++) {
-          s = title_comp[_x];
+        for (_y = 0, _len16 = title_comp.length; _y < _len16; _y++) {
+          s = title_comp[_y];
           lengthTitleComp = countWords(s);
           if ((s != null) && lengthTitleComp > longest_streak) {
             longest_streak = lengthTitleComp;
