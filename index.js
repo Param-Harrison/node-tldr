@@ -225,7 +225,7 @@
   };
 
   main = function(ch, options, callback) {
-    var $, arr, articleBody, averageLetterPercentage, averageSentences, best_s, best_s_index, cand, content, dict, element, error, failure, highestItem, highestScore, i, ignore, items, lengthTitleComp, letter_percentage, longest_streak, max_score, minimumWP, p, paragraph, paragraphs, paragraphsIgnore, paragraphsParsed, parents, parentsId, parentsScore, parentsScoreAverage, r, replace, result, s, score, selSentences, selSentencesWords, sent_count, sentences, sentencesByParagraph, sentencesIndex, strip_s, summary, t, temp, text, title, title_comp, totalWords, wp_ratio, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len12, _len13, _len14, _len15, _len16, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _ref, _s, _t, _u, _v, _w, _x, _y;
+    var $, arr, articleBody, averageLetterPercentage, averageSentences, best_s, best_s_index, cand, dict, element, error, failure, highestItem, highestScore, i, ignore, items, lengthTitleComp, letter_percentage, longest_streak, max_score, minimumWP, p, paragraph, paragraphs, paragraphsIgnore, paragraphsParsed, parents, parentsId, parentsScore, parentsScoreAverage, r, replace, result, s, score, selSentences, selSentencesWords, sent_count, sentences, sentencesByParagraph, sentencesIndex, strip_s, summary, t, temp, text, title, title_comp, totalWords, wp_ratio, _i, _j, _k, _l, _len, _len1, _len10, _len11, _len12, _len13, _len14, _len15, _len16, _len2, _len3, _len4, _len5, _len6, _len7, _len8, _len9, _m, _n, _o, _p, _q, _r, _ref, _s, _t, _u, _v, _w, _x, _y;
     $ = ch;
     summary = [];
     title = "";
@@ -403,6 +403,7 @@
       title = stripBrackets((stripTags($('h2[itemprop="title"]').text())).trim());
     }
     if ((title != null) && title.length > 0) {
+      title = cleanSentence(title);
       title_comp = title.split(/[-–:\|]\s/);
       if (title_comp.length > 1) {
         p = new RegExp('\s((\".+\")|(\'.+\'))\s', ["i"]);
@@ -411,9 +412,12 @@
         t = p.exec(content);
         while (t != null) {
           replace.push(['%s' + i, t[0]]);
-          content = content.replace(t[0], '%s' + i);
+          title = title.replace(t[0], '%s' + i);
           t = p.exec(content);
           i++;
+        }
+        if (replace.length > 0) {
+          title_comp = title.split(/[-–:\|]\s/);
         }
         longest_streak = 0;
         for (_u = 0, _len12 = title_comp.length; _u < _len12; _u++) {
@@ -429,9 +433,11 @@
             }
           }
         }
-        for (_v = 0, _len13 = replace.length; _v < _len13; _v++) {
-          r = replace[_v];
-          s = s.replace(r[0], r[1]);
+        if (replace.length > 0) {
+          for (_v = 0, _len13 = replace.length; _v < _len13; _v++) {
+            r = replace[_v];
+            title = title.replace(r[0], r[1]);
+          }
         }
       }
     } else {

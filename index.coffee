@@ -435,7 +435,7 @@ main = (ch, options, callback) ->
 		title = stripBrackets (stripTags $('h2[itemprop="title"]').text()).trim()
 
 	if title? and title.length > 0
-
+		title = cleanSentence title
 		# Split the title by common splitting characters
 		title_comp = title.split(/[-–:\|]\s/)
 		if title_comp.length > 1
@@ -449,9 +449,12 @@ main = (ch, options, callback) ->
 					'%s' + i
 					t[0]
 				]
-				content = content.replace t[0], ('%s' + i)
+				title = title.replace t[0], ('%s' + i)
 				t = p.exec(content)
 				i++
+
+			if replace.length > 0
+				title_comp = title.split(/[-–:\|]\s/)
 
 			# Search the longest component of the title-tag and make it the title
 			longest_streak = 0
@@ -465,7 +468,8 @@ main = (ch, options, callback) ->
 						title = s.trim()
 
 			# Replace the placeholders back with the old content
-			s = s.replace r[0], r[1] for r in replace
+			if replace.length > 0
+				title = title.replace r[0], r[1] for r in replace
 	else
 		# If there is no tagged h1-tag collect all h1- (and h2-) tags
 		items = $('h1').toArray()
