@@ -4,10 +4,6 @@ Node module summarizing web-articles using a naive algorithm, based on [node-sum
 ## Algorithm
 The algorithm used is explained [here](http://thetokenizer.com/2013/04/28/build-your-own-summary-tool/). The intersections are calculated between all sentences instead between all sentences per paragraph.
 
-## Demo
-
-[tl-dr.pw](http://tl-dr.pw/)
-
 ## Install
 
 ```
