@@ -550,7 +550,7 @@ exports.summarize = (input, options, callback) ->
 					callback title, summary, failure
 			else
 				callback { error: 'Failure while parsing' }, true
-	else if typeof input is 'object' # The input could be a cheerio object
+	else if typeof input is 'function' # The input could be a cheerio object
 		main input, options, (result, failure) ->
 			callback result, failure
 	else
