@@ -536,7 +536,7 @@
           }, true);
         }
       });
-    } else if (typeof input === 'object') {
+    } else if (typeof input === 'function') {
       return main(input, options, function(result, failure) {
         return callback(result, failure);
       });
