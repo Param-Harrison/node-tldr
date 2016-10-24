@@ -7,7 +7,7 @@ The algorithm used is explained [here](http://thetokenizer.com/2013/04/28/build-
 ## Install
 
 ```
-npm install node-sumuparticles
+npm install node-tldr
 ```
 
 ## Usage
