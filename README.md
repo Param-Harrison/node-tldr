@@ -14,7 +14,7 @@ npm install node-tldr
 
 ```javascript
 var summary = require('node-tldr');
-summary.summarize(url, function(title, summary, failure) {
+summary.summarize(url, function(result, failure) {
 	if (failure) {
 		console.log("An error occured! " + result.error);
 	}
