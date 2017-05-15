@@ -514,12 +514,12 @@
     }
     if (!isNumeric(options.maxAnalyzedSentences)) {
       callback({
-        error: 'Pass a valid number for the maximum number of sentences to be analyzed!'
+        error: "Error: " + 'Pass a valid number for the maximum number of sentences to be analyzed!'
       }, true);
     }
     if ((!isNumeric(options.shortenFactor)) || options.shortenFactor <= 0 || options.shortenFactor > 0.8) {
       callback({
-        error: 'Pass a valid factor between 0 and 0.8 the text will be shortened to!'
+        error: "Error: " + 'Pass a valid factor between 0 and 0.8 the text will be shortened to!'
       }, true);
     }
     if (typeof input === 'string') {
@@ -530,9 +530,15 @@
           return main(ch, options, function(title, summary, failure) {
             return callback(title, summary, failure);
           });
-        } else {
+        } 
+        else if (error) {
           return callback({
-            error: 'Failure while parsing'
+            error: error
+          }, true);
+        }
+        else {
+          return callback({
+            error: "Error: " + 'Failure while parsing.'
           }, true);
         }
       });
@@ -542,7 +548,7 @@
       });
     } else {
       return callback({
-        error: 'False input data'
+        error: "Error: " + 'False input data'
       }, true);
     }
   };
