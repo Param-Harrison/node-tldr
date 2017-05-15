@@ -26,6 +26,14 @@ summary.summarize(url, function(result, failure) {
 });
 ```
 
+##Command-line Usage
+
+Pass url of page you want to be summarized.
+
+```javascript
+ summary --s url
+```
+
 ## API
 
 ### summary.summarize(object, [options], callback(result, failure))
