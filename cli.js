@@ -18,7 +18,7 @@ program
   .option('-s, --summarize [url]', 'Summarize an article', getURL)
   .parse(process.argv);
 
-if (program.summarize) { 
+if (program.summarize) {
 	let url = program.summarize
 	summary.summarize(url, function(result, failure) {
 		if(failure) {

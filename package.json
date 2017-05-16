@@ -9,6 +9,14 @@
     "request": "*",
     "commander": "*"
   },
+  "bin": {
+    "node-tldr": "./cli.js"
+  },
+  "keywords": [
+    "summarize",
+    "article",
+    "page"
+  ],
   "author": "Phil Plückthun <gadschon@gmail.com>",
   "readmeFilename": "README.md"
 }

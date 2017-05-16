@@ -530,7 +530,12 @@
           return main(ch, options, function(title, summary, failure) {
             return callback(title, summary, failure);
           });
-        } 
+        }
+        else if(statusCode != 200) {
+          return callback({
+            error: response.statusMessage
+          }, true);
+        }
         else if (error) {
           return callback({
             error: error

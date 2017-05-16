@@ -26,12 +26,17 @@ summary.summarize(url, function(result, failure) {
 });
 ```
 
-##Command-line Usage
+## Command-line Usage
 
+Install the package globally
+
+```bash
+npm install node-tldr -g
+```
 Pass url of page you want to be summarized.
 
 ```javascript
- summary --s url
+ node-tldr summary --s url
 ```
 
 ## API
