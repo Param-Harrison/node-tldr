@@ -533,7 +533,7 @@
         }
         else if(statusCode != 200) {
           return callback({
-            error: response.statusMessage
+            error: "Error: " + response.statusMessage
           }, true);
         }
         else if (error) {
