@@ -531,14 +531,14 @@
             return callback(title, summary, failure);
           });
         }
-        else if(statusCode != 200) {
-          return callback({
-            error: "Error: " + response.statusMessage
-          }, true);
-        }
         else if (error) {
           return callback({
             error: error
+          }, true);
+        }
+        else if(response.statusCode != 200) {
+          return callback({
+            error: "Error: " + response.statusMessage
           }, true);
         }
         else {

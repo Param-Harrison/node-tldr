@@ -36,7 +36,7 @@ npm install node-tldr -g
 Pass url of page you want to be summarized.
 
 ```javascript
- node-tldr summary --s url
+ node-tldr url
 ```
 
 ## API

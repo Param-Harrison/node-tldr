@@ -8,24 +8,19 @@ let VERSION = require('./package.json').version;
 let summary = require('./index.js');
 let request = require('request');
 
-function getURL (val) {
-	return val
-}
-
 
 program
-  .version(VERSION)
-  .option('-s, --summarize [url]', 'Summarize an article', getURL)
-  .parse(process.argv);
+  .version('0.0.1')
+  .arguments('<url>')
+  .action(function (url) {
+     summary.summarize(url, function(result, failure) {
+			if(failure) {
+				throw new Error(result.error)
+			}
+			else {
+				console.log(result)
+			}
+		})
+  });
 
-if (program.summarize) {
-	let url = program.summarize
-	summary.summarize(url, function(result, failure) {
-		if(failure) {
-			console.log(`${result.error}`)
-		}
-		else {
-			console.log(result)
-		}
-	})
-}
+program.parse(process.argv);
